@@ -10,13 +10,14 @@ public abstract class OMCPlugin extends JavaPlugin{
 	public static OMCPlugin i;
 	public static OMCLogger logger;
 
-	public final OMCConfigManager configManager = new OMCConfigManager(new File(getDataFolder().getAbsolutePath(), "config.yml"));
+	public OMCConfigManager configManager;
 	
 	private final ArrayList<PluginTied> pluginTied = new ArrayList<>();
 	
 	@Override
 	public void onEnable() {
 		i = this;
+		configManager = new OMCConfigManager(new File(getDataFolder().getAbsolutePath(), "config.yml"));
 		OMCLang.loadFromConfig();
 		loadLangFromConfig();
 		instantiateLogger();
@@ -28,9 +29,7 @@ public abstract class OMCPlugin extends JavaPlugin{
 	}
 	
 
-	private void registerNativePluginTied() {
-		
-	}
+	private void registerNativePluginTied() {}
 
 	@Override
 	public void onDisable() {
@@ -40,6 +39,11 @@ public abstract class OMCPlugin extends JavaPlugin{
 	
 	public void loadConfig() {
 		configManager.loadConfig();
+	}
+	
+
+	public void registerPluginTied(PluginTied pluginTied) {
+		this.pluginTied.add(pluginTied);
 	}
 	
 	public abstract void loadLangFromConfig();

@@ -15,12 +15,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.command.defaults.BukkitCommand;
 
-public abstract class OMCCommandManager implements CommandExecutor, TabCompleter{
+public abstract class OMCCommandManager implements CommandExecutor, TabCompleter, PluginTied{
 
 	public final ArrayList<OMCCommand> COMMANDS = new ArrayList<>();
 	public final HashMap<String, BukkitCommand> COMMAND_MAP = new HashMap<>();
 
-	public OMCCommandManager() {
+	@Override
+	public void onPluginEnable() {
+		if(!COMMANDS.isEmpty()) return;
 		registerVariables();
 		registerCommands();
 		for(OMCCommand cmd : this.COMMANDS) {
@@ -31,8 +33,15 @@ public abstract class OMCCommandManager implements CommandExecutor, TabCompleter
 
 					@Override
 					public boolean execute(CommandSender sender, String alias, String[] args) {
-						return onCommand(sender, cmd.getBaseCommand(), alias, args);
+						return onCommand(sender, this, alias, args);
 					}
+					
+					@Override
+					public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+						return onTabComplete(sender, this, alias, args);
+					}
+					
+					//TODO Autocompletion for variables autocompletes token instead of list
 				};
 				try {
 					final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
@@ -44,19 +53,17 @@ public abstract class OMCCommandManager implements CommandExecutor, TabCompleter
 					e.printStackTrace();
 				}
 			}
-			OMCPlugin.i.getCommand(cmd.getBaseCommand()).setExecutor(this);
-			OMCPlugin.i.getCommand(cmd.getBaseCommand()).setTabCompleter(this);
 			OMCLogger.systemNormal("Command registered. Permission : (" + cmd.getPermissionString() + ") \t\tSignature : (" + cmd.architecture + ")");
 		}
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] argsArr) {
-		return onCommand(sender, cmd.getName(), alias, argsArr);
-	}
+	public void onPluginDisable() {}
 	
-	public boolean onCommand(CommandSender sender, String commandArchitecture, String alias, String[] argsArr) {
+	@Override	
+	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] argsArr) {
 		ArrayList<String> args = new ArrayList<>(Arrays.asList(argsArr));
+		String commandArchitecture = cmd.getName();
 		for(String s : args) commandArchitecture += " " + s;
 		for(OMCCommand command : this.COMMANDS) if(command.architectureMatches(commandArchitecture)) return command.execute(sender, commandArchitecture);
 		return OMCLogger.error(sender, OMCLang.COMMAND_SYNTAX_ERROR.toString().replace("<%SYNTAX>", commandArchitecture));
