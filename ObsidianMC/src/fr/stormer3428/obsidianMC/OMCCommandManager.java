@@ -1,33 +1,62 @@
 package fr.stormer3428.obsidianMC;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.command.defaults.BukkitCommand;
 
 public abstract class OMCCommandManager implements CommandExecutor, TabCompleter{
 
 	public final ArrayList<OMCCommand> COMMANDS = new ArrayList<>();
+	public final HashMap<String, BukkitCommand> COMMAND_MAP = new HashMap<>();
 
 	public OMCCommandManager() {
 		registerVariables();
 		registerCommands();
 		for(OMCCommand cmd : this.COMMANDS) {
+			ArrayList<String> aliases = new ArrayList<>();
+			for(String a : cmd.architecture.split(" ")) aliases.add(a);
+			if(!COMMAND_MAP.containsKey(cmd.getBaseCommand())) {
+				BukkitCommand bukkitCommand = new BukkitCommand(cmd.getBaseCommand(), cmd.getDescription(), cmd.architecture, aliases) {
+
+					@Override
+					public boolean execute(CommandSender sender, String alias, String[] args) {
+						return onCommand(sender, cmd.getBaseCommand(), alias, args);
+					}
+				};
+				try {
+					final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+					bukkitCommandMap.setAccessible(true);
+					CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
+					commandMap.register(cmd.getBaseCommand(), bukkitCommand);
+					COMMAND_MAP.put(cmd.getBaseCommand(), bukkitCommand);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			OMCPlugin.i.getCommand(cmd.getBaseCommand()).setExecutor(this);
 			OMCPlugin.i.getCommand(cmd.getBaseCommand()).setTabCompleter(this);
 			OMCLogger.systemNormal("Command registered. Permission : (" + cmd.getPermissionString() + ") \t\tSignature : (" + cmd.architecture + ")");
 		}
 	}
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] argsArr) {
+		return onCommand(sender, cmd.getName(), alias, argsArr);
+	}
+	
+	public boolean onCommand(CommandSender sender, String commandArchitecture, String alias, String[] argsArr) {
 		ArrayList<String> args = new ArrayList<>(Arrays.asList(argsArr));
-		String commandArchitecture = cmd.getName();
 		for(String s : args) commandArchitecture += " " + s;
 		for(OMCCommand command : this.COMMANDS) if(command.architectureMatches(commandArchitecture)) return command.execute(sender, commandArchitecture);
 		return OMCLogger.error(sender, OMCLang.COMMAND_SYNTAX_ERROR.toString().replace("<%SYNTAX>", commandArchitecture));
