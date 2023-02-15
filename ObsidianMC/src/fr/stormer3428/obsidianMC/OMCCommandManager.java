@@ -18,7 +18,7 @@ import org.bukkit.command.defaults.BukkitCommand;
 public abstract class OMCCommandManager implements CommandExecutor, TabCompleter, PluginTied{
 
 	public final ArrayList<OMCCommand> COMMANDS = new ArrayList<>();
-	public final HashMap<String, BukkitCommand> COMMAND_MAP = new HashMap<>();
+	private final HashMap<String, BukkitCommand> COMMAND_MAP = new HashMap<>();
 
 	@Override
 	public void onPluginEnable() {
@@ -43,6 +43,7 @@ public abstract class OMCCommandManager implements CommandExecutor, TabCompleter
 					
 					//TODO Autocompletion for variables autocompletes token instead of list
 				};
+				bukkitCommand.setPermission(cmd.getPermissionString());
 				try {
 					final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
 					bukkitCommandMap.setAccessible(true);

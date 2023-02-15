@@ -28,6 +28,17 @@ public abstract class OMCCommand {
 				return list;
 			}
 		});
+
+		VARIABLES.add(new OMCVariable("%B%") {
+			@Override
+			protected ArrayList<String> complete(String incomplete) {
+				final ArrayList<String> list = new ArrayList<>();
+				final String lower = incomplete.toLowerCase();
+				if("true".startsWith(lower)) list.add("True");
+				if("false".startsWith(lower)) list.add("False");
+				return list;
+			}
+		});
 	}
 
 	public static void registerVariable(OMCVariable v) {
