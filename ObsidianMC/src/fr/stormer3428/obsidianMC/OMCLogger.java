@@ -60,13 +60,13 @@ public class OMCLogger {
 
 	public static boolean systemNormal(String strg){
 		String m = PREFIX_COMMAND + strg;
-		Bukkit.getConsoleSender().sendMessage(m);
+		OMCPlugin.i.getLogger().info(m);
 		return true;
 	}
 
 	public static boolean systemError(String strg){
 		String m = PREFIX_ERROR + strg;
-		Bukkit.getConsoleSender().sendMessage(m);
+		OMCPlugin.i.getLogger().warning(m);
 		return false;
 	}
 

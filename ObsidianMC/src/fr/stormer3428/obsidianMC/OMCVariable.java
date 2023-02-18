@@ -2,18 +2,20 @@ package fr.stormer3428.obsidianMC;
 
 import java.util.ArrayList;
 
+import org.bukkit.command.CommandSender;
+
 public abstract class OMCVariable {
 
-	private final String signature;
+	protected final String signature;
 	
-	public boolean matchesArchitecture(String s) {
-		return signature.equals(s);
+	public boolean matches(String s) {
+		return signature.equalsIgnoreCase(s);
 	}
 	
 	public OMCVariable(String signature) {
 		this.signature = signature;
 	}
 	
-	protected abstract ArrayList<String> complete(String incomplete);
+	protected abstract ArrayList<String> complete(CommandSender sender, String incomplete);
 	
 }

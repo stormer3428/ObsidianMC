@@ -14,14 +14,14 @@ public abstract class OMCCommand {
 	static {
 		VARIABLES.add(new OMCVariable("%V%") {
 			@Override
-			protected ArrayList<String> complete(String incomplete) {
+			protected ArrayList<String> complete(CommandSender sender, String incomplete) {
 				return new ArrayList<>();
 			}
 		});
 
 		VARIABLES.add(new OMCVariable("%P%") {
 			@Override
-			protected ArrayList<String> complete(String incomplete) {
+			protected ArrayList<String> complete(CommandSender sender, String incomplete) {
 				final ArrayList<String> list = new ArrayList<>();
 				final String lower = incomplete.toLowerCase();
 				for(Player p : Bukkit.getOnlinePlayers()) if(p.getName().toLowerCase().startsWith(lower)) list.add(p.getName());
@@ -31,7 +31,7 @@ public abstract class OMCCommand {
 
 		VARIABLES.add(new OMCVariable("%B%") {
 			@Override
-			protected ArrayList<String> complete(String incomplete) {
+			protected ArrayList<String> complete(CommandSender sender, String incomplete) {
 				final ArrayList<String> list = new ArrayList<>();
 				final String lower = incomplete.toLowerCase();
 				if("true".startsWith(lower)) list.add("True");
@@ -45,92 +45,103 @@ public abstract class OMCCommand {
 		VARIABLES.add(v);
 	}
 
-	private final String baseCommand;
-	final String architecture;
+	final ArrayList<String[]> architecture = new ArrayList<>();
+	final String rawArchitecture;
 
-	public OMCCommand(String architecture) {
-		this.architecture = architecture;
-		this.baseCommand = architecture.split(" ")[0].split(ALIAS_SEPARATOR)[0];
+	public OMCCommand(String givenArchitecture) {
+		for(String arg : givenArchitecture.split(" ")) architecture.add(arg.split(ALIAS_SEPARATOR));
+		rawArchitecture = givenArchitecture;
 	}
 
-	public boolean execute(CommandSender sender, String commandArchitecture) {
-		String[] arch = architecture.split(" ");
-		String[] fcmd = commandArchitecture.split(" ");
+	public boolean execute(CommandSender sender, String[] args) {
+		if(!sender.hasPermission(getPermissionString())) return OMCLogger.error(sender, OMCLang.ERROR_GENERIC_NOPERMISSION.toString().replace("<%PERMISSION>", getPermissionString()));
 		ArrayList<String> variables = new ArrayList<>();
-		for(int i = 0; i < arch.length; i++) for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i])) variables.add(fcmd[i]);
+		int i = 0;
+		for(String arg : args) {
+			i++;
+			for(OMCVariable variable : VARIABLES) if(variable.matches(architecture.get(i)[0])) {
+				variables.add(arg);
+				break;
+			}
+		}		
 		return execute(sender, variables);
 	}
+
 	public abstract boolean execute(CommandSender sender, ArrayList<String> vars);
 
-	public String getBaseCommand() {
-		return baseCommand;
-	}
-
 	public String getPermissionString() {
-		String[] arch = architecture.split(" ");
-		String permission = arch[0].split(ALIAS_SEPARATOR)[0];
-		for(int i = 1; i < arch.length; i++) permission += "." + arch[i].split(ALIAS_SEPARATOR)[0];
-		return permission;
+		StringBuilder permission = new StringBuilder();
+		for(String[] stage : architecture) permission.append(String.join(ALIAS_SEPARATOR, stage) + " ");
+		return permission.toString().trim().replace(" ", ".");
 	}
 
-	public boolean architectureMatches(String fullCommand) {
-		OMCLogger.debug("Checking if architecture matches \n" + architecture + "\n" + fullCommand);
-		String[] arch = architecture.split(" ");
-		String[] fcmd = fullCommand.split(" ");
-		if(arch.length != fcmd.length) {
-			OMCLogger.debug("Lenght mismatch");
+
+	public boolean matches(String command, String[] args) {
+		if(architecture.size() != args.length + 1) return false;
+		ArrayList<String> fullArgs = new ArrayList<>(args.length + 1);
+		fullArgs.add(command);
+		for(String arg : args) fullArgs.add(arg);
+
+		int stageIndex = -1;
+		argLoop:for(String arg : fullArgs) {
+			stageIndex++;
+			String[] stage = architecture.get(stageIndex);
+			if(stage.length == 1) for(OMCVariable variable : VARIABLES) if(variable.matches(stage[0])) continue argLoop; //if variable, we accept anything so we also match anything
+			//we dont expect a variable
+			for(String stageElement : stage) if(stageElement.equalsIgnoreCase(arg)) continue argLoop; //it matches one of the aliases
 			return false;
 		}
-		OMCLogger.debug("Lenght match");
-		mainloop:
-			for(int i = 0; i < arch.length; i++) {
-				OMCLogger.debug("\n" + arch[i] + "\n" + fcmd[i]);
-				for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i])) continue mainloop;
-				OMCLogger.debug("Alias matcher : ");
-				for(String a : arch[i].split(ALIAS_SEPARATOR)) if(fcmd[i].equalsIgnoreCase(a)) {
-					OMCLogger.debug("passed : " + a);
-					continue mainloop;
-				}
-
-				OMCLogger.debug("Found no alias match");
-				return false;
-			}
-		OMCLogger.debug("Architecture matches");
 		return true;
 	}
 
-	public ArrayList<String> autocompletionMatches(CommandSender sender,  String[] fcmd) {
+	public ArrayList<String> autocomplete(CommandSender sender, String command, String[] args) {
 		ArrayList<String> list = new ArrayList<>();
-		String[] arch = architecture.split(" ");
-		if(fcmd.length > arch.length) return list;
-		OMCLogger.debug("Checking if autocompletion architecture matches \n" + architecture);
-		for(int i = 0; i < fcmd.length; i++) OMCLogger.debug(i + " " + fcmd[i]);
 
-		mainLoop:
-			for(int i = 1; i < fcmd.length; i++) {
-				for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i-1])) continue mainLoop;
-				for(String a : arch[i].split(ALIAS_SEPARATOR)) if(fcmd[i].equalsIgnoreCase(a)) continue mainLoop;
-				if(!fcmd[i].isBlank() && !fcmd[i].isEmpty()) {
-					for(OMCVariable v : VARIABLES) if(v.matchesArchitecture(arch[i])) continue mainLoop;
-					for(String a : arch[i].split(ALIAS_SEPARATOR)) if(a.toLowerCase().startsWith(fcmd[i].toLowerCase())) continue mainLoop;
-					OMCLogger.debug("Returned early ("+ fcmd[i] +")");
+		if(architecture.size() < args.length + 1) {
+			OMCLogger.debug(architecture.get(0)[0] + " lenght mismatched, expected " + architecture.size() + " but got " + (args.length + 1));
+			return list;
+		}
+		
+		OMCLogger.debug(architecture.get(0)[0] + " lenght matched, expected " + architecture.size() + " got " + (args.length + 1));
+		
+		ArrayList<String> fullArgs = new ArrayList<>(args.length + 1);
+		fullArgs.add(command);
+		for(String arg : args) fullArgs.add(arg);
+
+		int stageIndex = -1;
+		argLoop:for(String arg : fullArgs) {
+			stageIndex++;
+			boolean isLastStage = stageIndex == fullArgs.size() - 1;
+			String[] stage = architecture.get(stageIndex);
+			if(stage.length == 1) for(OMCVariable variable : VARIABLES) if(variable.matches(stage[0])) {
+				if(!isLastStage) continue argLoop; //if variable, we accept anything so we also match anything
+				ArrayList<String> completed = variable.complete(sender, arg);
+				OMCLogger.debug("Matched variable " + variable.signature);
+				for(String s : completed) OMCLogger.debug("Variable Entry added : " + s);
+				list.addAll(completed);
+				OMCLogger.debug("returned variable completed list (" + completed.size() +")");
+				return list;
+			}
+			OMCLogger.debug("No variable matched, checking for architecture");
+			//we dont expect a variable
+			final String lowarArg = arg.toLowerCase();
+			for(String stageElement : stage) {
+				final String lowerStageElement = stageElement.toLowerCase();
+				if(!isLastStage) {
+					if(lowerStageElement.equals(lowarArg)) continue argLoop; //it matches one of the aliases
+				}else if(lowerStageElement.startsWith(lowarArg)) {
+					list.add(stage[0]);
+					OMCLogger.debug("Regular entry added : " + stage[0]);
 					return list;
 				}
 			}
-		//previous args matches
-		OMCLogger.debug("Architecture matching up to this point, adding entries...");
-
-		String a = arch[fcmd.length - 1];
-		String f = fcmd[fcmd.length - 1];
-
-		if((f.isEmpty() || f.isBlank()) || a.toLowerCase().startsWith(f.toLowerCase())) {
-			list.add(a.split(ALIAS_SEPARATOR)[0]);
-			OMCLogger.debug("Entry added : " + a.split(ALIAS_SEPARATOR)[0]);
+			OMCLogger.debug("Architecture match failed, returning");
 			return list;
 		}
-
+		OMCLogger.debug("Architecture matches exactly with no ther outcome, returning");
 		return list;
 	}
+
 
 	public String getDescription() {
 		return "No description";

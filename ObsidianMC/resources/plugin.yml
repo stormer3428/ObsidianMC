@@ -1,6 +1,6 @@
 name: ObsidianMC
 api: []
-version: '0.0.1'
+version: ${project.version}
 author: stormer3428
 main: fr.stormer3428.obsidianMC.DummyMain
 api-version: 1.16
