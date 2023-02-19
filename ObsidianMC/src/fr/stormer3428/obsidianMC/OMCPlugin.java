@@ -1,6 +1,5 @@
 package fr.stormer3428.obsidianMC;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.bukkit.plugin.java.JavaPlugin;
