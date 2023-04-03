@@ -9,6 +9,7 @@ import org.bukkit.util.Vector;
 public class Geometry {
 
 	ArrayList<Line> lines = new ArrayList<>();
+	ArrayList<Point> points = new ArrayList<>();
 	private Vector direction;
 	
 	public Geometry(Vector direction) {
@@ -19,6 +20,11 @@ public class Geometry {
 		this.lines.addAll(Arrays.asList(line));
 		return this;
 	}
+	
+	public Geometry addPoint(Point ... point) {
+		this.points.addAll(Arrays.asList(point));
+		return this;
+	}
 
 	public Geometry draw(Location location) {
 		return draw(location, 1.0);
@@ -26,29 +32,34 @@ public class Geometry {
 	
 	public Geometry draw(Location location, double scale) {
 		for(Line line : lines) line.draw(location, scale);
+		for(Point point : points) point.draw(location, scale);
 		return this;
 	}
 	
 	public Geometry rotateAroundAxis(Vector axis, double radians) {
 		for(Line line : lines) line.rotateAroundAxis(axis, radians);
+		for(Point point : points) point.rotateAroundAxis(axis, radians);
 		direction.rotateAroundAxis(axis, radians);
 		return this;
 	}
 	
 	public Geometry rotateAroundX(double radians) {
 		for(Line line : lines) line.rotateAroundX(radians);
+		for(Point point : points) point.rotateAroundX(radians);
 		direction.rotateAroundX(radians);
 		return this;
 	}
 	
 	public Geometry rotateAroundY(double radians) {
 		for(Line line : lines) line.rotateAroundY(radians);
+		for(Point point : points) point.rotateAroundY(radians);
 		direction.rotateAroundY(radians);
 		return this;
 	}
 	
 	public Geometry rotateAroundZ(double radians) {
 		for(Line line : lines) line.rotateAroundZ(radians);
+		for(Point point : points) point.rotateAroundZ(radians);
 		direction.rotateAroundZ(radians);
 		return this;
 	}
