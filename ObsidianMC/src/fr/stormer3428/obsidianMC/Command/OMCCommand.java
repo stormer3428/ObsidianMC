@@ -49,8 +49,8 @@ public abstract class OMCCommand {
 		VARIABLES.add(v);
 	}
 
-	final ArrayList<String[]> architecture = new ArrayList<>();
-	final String rawArchitecture;
+	public final ArrayList<String[]> architecture = new ArrayList<>();
+	public final String rawArchitecture;
 
 	public OMCCommand(String givenArchitecture) {
 		OMCLogger.debug("creating new command from architecture : ["+givenArchitecture+"]");
