@@ -4,19 +4,53 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import fr.stormer3428.obsidianMC.PluginTied;
+import fr.stormer3428.obsidianMC.OMCPlugin;
 import fr.stormer3428.obsidianMC.Command.OMCCommand;
 import fr.stormer3428.obsidianMC.Command.OMCVariable;
+import fr.stormer3428.obsidianMC.Config.ConfigHolder;
 import fr.stormer3428.obsidianMC.Power.OMCPower;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
 import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
-public abstract class OMCPowerManager implements PluginTied{
+public abstract class OMCPowerManager extends ConfigHolder implements Listener{
 
 	private final ArrayList<OMCPower> registeredPowers = new ArrayList<>();
+		
+	public OMCPowerManager(String configName) {
+		super(new File(OMCPlugin.i.getDataFolder(), configName));
+	}
 
+	@Override
+	public void onPluginDisable() {
+		for(OMCPower power : registeredPowers) power.onPluginDisable();
+	}
+	
+	@Override
+	public void onPluginReload() {
+		super.onPluginReload();
+		for(OMCPower power : registeredPowers) power.onPluginReload();
+	}
+	
+	@Override
+	public void onPluginEnable() {
+		super.onPluginEnable();
+		OMCPlugin.i.getServer().getPluginManager().registerEvents(this, OMCPlugin.i);
+		for(OMCPower power : registeredPowers) power.onPluginEnable();
+		new BukkitRunnable() {
+			int ticker = 0;
+			@Override
+			public void run() {
+				ticker++;
+				for(OMCPower power : registeredPowers) {
+					power.onTick(ticker);
+				}
+			}
+		}.runTaskTimer(OMCPlugin.i, 0, 1);	
+	}
+	
 	/**
 	 * Creates a {@link OMCVariable} with the given signature that completes for registered {@link OMCPower}
 	 * 
@@ -42,19 +76,6 @@ public abstract class OMCPowerManager implements PluginTied{
 			}
 		};
 	}
-	
-	/**
-	 * Should return the {@link FileConfiguration} used by this power manager
-	 * @return the config of this manager
-	 * @see #getPowerConfigFile()
-	 */
-	public abstract FileConfiguration getPowerConfig();
-	/**
-	 * Should return the {@link File} {@link #getPowerConfig()} uses
-	 * @return the {@link File} used to store the config of this manager
-	 */
-	public abstract File getPowerConfigFile();
-
 
 	/**
 	 * 
@@ -73,6 +94,7 @@ public abstract class OMCPowerManager implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_POWER_MANAGER_REGISTER_NULL_NAME.toString());
 			return;
 		}
+		OMCPlugin.i.getServer().getPluginManager().registerEvents(power, OMCPlugin.i);
 		registeredPowers.add(power);
 	}
 

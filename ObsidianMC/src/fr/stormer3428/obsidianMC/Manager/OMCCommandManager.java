@@ -10,8 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
-import fr.stormer3428.obsidianMC.PluginTied;
 import fr.stormer3428.obsidianMC.Command.OMCCommand;
+import fr.stormer3428.obsidianMC.Command.OMCVariable;
+import fr.stormer3428.obsidianMC.Config.PluginTied;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
 import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
@@ -30,6 +31,9 @@ public abstract class OMCCommandManager implements CommandExecutor, TabCompleter
 		registerExecutorsAndTabCompelters();
 	}
 
+	@Override
+	public void onPluginReload() {}
+	
 	@Override	
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		for(OMCCommand command : this.COMMANDS) if(command.matches(cmd.getName(), args)) return command.execute(sender, args);
@@ -63,5 +67,15 @@ public abstract class OMCCommandManager implements CommandExecutor, TabCompleter
 	
 	protected abstract void registerVariables();
 	protected abstract void registerCommands();
+
+	public void registerVariable(OMCVariable ... variable) {
+		for(OMCVariable v : variable)
+		OMCCommand.registerVariable(v);
+	}
+	
+	public void registerCommand(OMCCommand ...command) {
+		for(OMCCommand c : command)
+		COMMANDS.add(c);
+	}
 
 }

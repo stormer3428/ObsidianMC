@@ -58,6 +58,7 @@ public class OMCUtil {
 	}
 	
 	public static String translateChatColor(String s) {
+		if(s == null) return null;
 		return ChatColor.translateAlternateColorCodes('$', ChatColor.translateAlternateColorCodes('&', s));
 	}
 	

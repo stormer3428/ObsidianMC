@@ -4,21 +4,40 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import fr.stormer3428.obsidianMC.PluginTied;
+import fr.stormer3428.obsidianMC.OMCPlugin;
 import fr.stormer3428.obsidianMC.Command.OMCCommand;
 import fr.stormer3428.obsidianMC.Command.OMCVariable;
+import fr.stormer3428.obsidianMC.Config.ConfigHolder;
 import fr.stormer3428.obsidianMC.Item.OMCItem;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
 import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
-public abstract class OMCItemManager implements Listener, PluginTied{
+public abstract class OMCItemManager extends ConfigHolder implements Listener{
 
 	private final ArrayList<OMCItem> registeredItems = new ArrayList<>();
-
+		
+	public OMCItemManager(String configName) {
+		super(new File(OMCPlugin.i.getDataFolder(), configName));
+	}
+	
+	@Override
+	public void onPluginEnable() {
+		OMCPlugin.i.getServer().getPluginManager().registerEvents(this, OMCPlugin.i);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Creates a {@link OMCVariable} with the given signature that completes for registered {@link OMCItem}
 	 * 
@@ -73,18 +92,6 @@ public abstract class OMCItemManager implements Listener, PluginTied{
 	public ArrayList<OMCItem> getItems() {
 		return new ArrayList<>(registeredItems);
 	}
-	
-	/**
-	 * Should return the {@link FileConfiguration} used by this item manager
-	 * @return the config of this manager
-	 * @see #getItemConfigFile()
-	 */
-	public abstract FileConfiguration getItemConfig();
-	/**
-	 * Should return the {@link File} {@link #getItemConfig()} uses
-	 * @return the {@link File} used to store the config of this manager
-	 */
-	public abstract File getItemConfigFile();
 
 	/**
 	 * Returns whether or not the manager recognizes this {@link ItemStack} as a registered {@link OMCItem}
@@ -126,8 +133,7 @@ public abstract class OMCItemManager implements Listener, PluginTied{
 	public OMCItem fromName(String item) {
 		for(OMCItem omcItem : registeredItems) if(omcItem.getRegistryName().equalsIgnoreCase(item)) return omcItem;
 		return null;
-	}
-	
+	}	
 }
 
 
