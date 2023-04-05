@@ -11,13 +11,34 @@ import fr.stormer3428.obsidianMC.OMCPlugin;
 public enum OMCLang {
 
 	ERROR_GENERIC_NOPERMISSION("You do not have the permission to perform this command (<%PERMISSION>)"),
-	ERROR_GENERIC_NOPLAYER("No player with such name : <%PLAYER>"),
 	ERROR_PLAYERONLY("You may only run this command as a player"),
-	ERROR_INTEGER("Invalid argument \"<%VALUE>\", expected an integer"),
-	ERROR_FLOAT("Invalid argument \"<%VALUE>\", expected a float"),
-	ERROR_MIN_GT_MAX("Invalid argument, the minimum value <%MIN> is greater than the maximum value <%MAX>"),
 
-	COMMAND_SYNTAX_ERROR("No command with signature \n\"<%SYNTAX>\""),
+	ERROR_MISSINGARG_NOPLAYER("You must specify a player"),
+	ERROR_MISSINGARG_INTEGER("You must specify an integer"),
+	ERROR_MISSINGARG_FLOAT("You must specify a float"),
+	ERROR_MISSINGARG_MATERIAL("You must specify a material "),
+	
+	ERROR_INVALIDARG_NOPLAYER("No player with such name : <%PLAYER>"),
+	ERROR_INVALIDARG_INTEGER("Invalid argument \"<%VALUE>\", expected an integer"),
+	ERROR_INVALIDARG_FLOAT("Invalid argument \"<%VALUE>\", expected a float"),
+	ERROR_INVALIDARG_MIN_GT_MAX("Invalid argument, the minimum value <%MIN> is greater than the maximum value <%MAX>"),
+	ERROR_INVALIDARG_MATERIAL("Error, no material with such name '<%MATERIAL>'"),
+	
+	ERROR_MISSING_CONFIG("Error, failed parse <%FILE>"),
+	ERROR_MISSING_CONFIG_SECTION("Error, missing a configuration section at '<%PATH>'"),
+	ERROR_MISSING_CONFIG_FILE("Warning, File <%FILE> missing, importing from jar. (If this is the first time the plugin is loaded, you may ignore this warning)"),
+	
+	ERROR_INVALID_CMD_ID("Error, tried to retrieve custom model data <%CMDID> for SMPItem <%SMPITEM>, but only <%CMDS> available"),
+
+	ERROR_ITEM_MANAGER_REGISTER_NULL("Tried to register a null item to the OMCItem manager"),
+	ERROR_ITEM_MANAGER_REGISTER_NULL_NAME("Tried to register an item with no registry name to the OMCItem manager"),
+	
+	ERROR_POWER_MANAGER_REGISTER_NULL("Tried to register a null power to the OMCPower manager"),
+	ERROR_POWER_MANAGER_REGISTER_NULL_NAME("Tried to register a power with no registry name to the OMCPower manager"),
+	
+	ERROR_CONFIG_MISSING_PATH("Error, tried to access undefined path <%PATH> in config file '<%CONFIG>'"),
+
+	COMMAND_SYNTAX_ERROR("No command with signature \n\"<%SYNTAX>\""), 
 	;
 
 	private String path;
