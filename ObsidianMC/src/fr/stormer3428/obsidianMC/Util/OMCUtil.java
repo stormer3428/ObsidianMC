@@ -1,8 +1,9 @@
 package fr.stormer3428.obsidianMC.Util;
 
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -12,6 +13,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class OMCUtil {
 
@@ -57,9 +60,21 @@ public class OMCUtil {
 		return it;
 	}
 	
+	private static final Pattern hexColorCodePattern = Pattern.compile("#[a-fA-F0-9]{6}");
+	
 	public static String translateChatColor(String s) {
 		if(s == null) return null;
-		return ChatColor.translateAlternateColorCodes('$', ChatColor.translateAlternateColorCodes('&', s));
+		s = ChatColor.translateAlternateColorCodes('&', s);
+		s = ChatColor.translateAlternateColorCodes('$', s);
+		s = ChatColor.translateAlternateColorCodes('§', s);
+		
+		Matcher hexMatcher = hexColorCodePattern.matcher(s);
+		while(hexMatcher.find()) {
+			String color = s.substring(hexMatcher.start(), hexMatcher.end());
+			s = s.replace(color, ChatColor.of(color) + "");
+			hexMatcher = hexColorCodePattern.matcher(s);
+		}
+		return s;
 	}
 	
 	public static boolean isUnderRain(LivingEntity le) {

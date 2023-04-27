@@ -1,10 +1,14 @@
 package fr.stormer3428.obsidianMC.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import fr.stormer3428.obsidianMC.Manager.OMCItemManager;
@@ -12,11 +16,12 @@ import fr.stormer3428.obsidianMC.Util.OMCLang;
 import fr.stormer3428.obsidianMC.Util.OMCLogger;
 import fr.stormer3428.obsidianMC.Util.OMCUtil;
 
-public abstract class SMPItem implements OMCItem{
+public class SMPItem implements OMCItem{
 
 	private static final String KEY_DISPLAYNAME = "displayName";
 	private static final String KEY_CMDS = "customModelData";
 	private static final String KEY_MATERIAL = "material";
+	private static final String KEY_GLINT = "addGlint";
 	private static final String KEY_LORE = "lore";
 	
 	private final OMCItemManager itemManager;
@@ -75,6 +80,10 @@ public abstract class SMPItem implements OMCItem{
 		itm.setDisplayName(ChatColor.RESET + getDisplayName());
 		if(hasCMD()) itm.setCustomModelData(getCMD());
 		List<String> lore = itemManager.getStringList(registryName + "." + KEY_LORE);
+		if(getItemManager().getBoolean(registryName + "." + KEY_GLINT)) {
+			itm.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 5, false);
+			itm.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		}
 		itm.setLore(lore.isEmpty() ? null : lore);
 		it.setItemMeta(itm);
 		return it;
@@ -91,6 +100,10 @@ public abstract class SMPItem implements OMCItem{
 	@Override
 	public boolean matches(OMCItem other) {
 		return other.equals(this);
+	}
+	
+	public List<Recipe> getRecipes() {
+		return new ArrayList<>();
 	}
 
 }

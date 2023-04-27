@@ -1,4 +1,4 @@
-package fr.stormer3428.obsidianMC.Util.TemporaryBlock;
+package fr.stormer3428.obsidianMC.Util.Block;
 
 import java.util.ArrayList;
 
@@ -16,21 +16,32 @@ public class TemporaryBlock {
 	public static ArrayList<TemporaryBlock> all = new ArrayList<>();
 
 	private TemporaryBlock instance = this;
-	private Material material;
+	private BlockData blockData;
 	private int remainingTicks;
 	private Location location;
 
-	public TemporaryBlock(Material material, int visibleTime, Location loc) {
+	private TemporaryBlock(BlockData blockData, int visibleTime, Location loc) {
 		this.location = loc;
-		this.material = material;
 		this.remainingTicks = visibleTime;
+		setBlockData(blockData);
 		all.add(this);
 		startLoop();
 	}
 
+	public static TemporaryBlock createNew(Material material, int visibleTime, Location loc) {
+		return createNew(material.createBlockData(), visibleTime, loc);
+	}
+	
+	public static TemporaryBlock createNew(BlockData blockData, int visibleTime, Location loc) {
+		for(TemporaryBlock block : all) if(block.location.equals(loc)) {
+			block.setRemainingTicks(visibleTime);
+			block.setBlockData(blockData);
+			return block;
+		}
+		return new TemporaryBlock(blockData, visibleTime, loc);
+	}
+	
 	private void startLoop() {
-		BlockData BData = this.material.createBlockData();
-		for(Player p : Bukkit.getOnlinePlayers()) p.sendBlockChange(this.location, BData);
 		new BukkitRunnable() {
 
 			@Override
@@ -45,20 +56,21 @@ public class TemporaryBlock {
 		}.runTaskTimer(OMCPlugin.i, 0, 1);
 	}
 
-	public Material getMaterial() {
-		return this.material;
-	}
-
-	public void setMaterial(Material material) {
-		this.material = material;
-	}
-
 	public int getRemainingTicks() {
 		return this.remainingTicks;
 	}
 
 	public void setRemainingTicks(int remainingTicks) {
 		this.remainingTicks = remainingTicks;
+	}
+
+	public BlockData getBlockData() {
+		return blockData;
+	}
+
+	public void setBlockData(BlockData blockData) {
+		this.blockData = blockData;
+		for(Player p : Bukkit.getOnlinePlayers()) p.sendBlockChange(this.location, blockData);
 	}
 
 }

@@ -1,4 +1,4 @@
-package fr.stormer3428.obsidianMC.Util.TemporaryBlock;
+package fr.stormer3428.obsidianMC.Util.Block;
 
 import java.util.ArrayList;
 

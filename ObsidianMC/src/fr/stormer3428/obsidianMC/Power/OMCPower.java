@@ -14,9 +14,9 @@ import fr.stormer3428.obsidianMC.Manager.OMCPowerManager;
 
 public abstract class OMCPower implements PluginTied, Listener{
 	
-	private static final String KEY_COOLDOWN = "cooldown";
-	private static final String KEY_DURATION = "duration";
-	private static final String KEY_ENABLED = "enabled";
+	public static final String KEY_COOLDOWN = "cooldown";
+	public static final String KEY_DURATION = "duration";
+	public static final String KEY_ENABLED = "enabled";
 	protected ArrayList<UUID> empowered = new ArrayList<>();
 	protected ArrayList<UUID> onCooldown = new ArrayList<>();
 
@@ -36,7 +36,7 @@ public abstract class OMCPower implements PluginTied, Listener{
 	}
 
 	public void tryCast(ItemStack it, Player p) {
-		if(!powerManager.getBoolean(registryName + "." + KEY_ENABLED)) return;
+		if(!powerManager.getBoolean(path(KEY_ENABLED))) return;
 		if(onCooldown.contains(p.getUniqueId()) || empowered.contains(p.getUniqueId()) || !meetsConditions(it, p)) return;
 		empower(it, p);
 	}
@@ -52,11 +52,11 @@ public abstract class OMCPower implements PluginTied, Listener{
 				putOnCooldown(p);
 				onDepower(p);
 			}
-		}.runTaskLater(OMCPlugin.i, powerManager.getInt(registryName + "." + KEY_DURATION));
+		}.runTaskLater(OMCPlugin.i, powerManager.getInt(path(KEY_DURATION)));
 	}
 	
 	protected void putOnCooldown(Player p) {
-		int abilityCooldown = powerManager.getInt(registryName + "." + KEY_COOLDOWN);
+		int abilityCooldown = powerManager.getInt(path(KEY_COOLDOWN));
 		onCooldown.add(p.getUniqueId());
 		onDepower(p);
 		new BukkitRunnable() {
