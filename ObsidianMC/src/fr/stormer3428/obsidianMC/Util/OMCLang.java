@@ -35,9 +35,13 @@ public enum OMCLang {
 	
 	ERROR_POWER_MANAGER_REGISTER_NULL("Tried to register a null power to the OMCPower manager"),
 	ERROR_POWER_MANAGER_REGISTER_NULL_NAME("Tried to register a power with no registry name to the OMCPower manager"),
+
+	ERROR_POTION_MANAGER_NO_POTIONEFFECT("No potion effect with such name : <%INVALID> in file <%FILE>\n Valid options are <%VALID>"),
+	ERROR_POTION_MANAGER_NO_CONDITION("No potion effect condition with such name : <%INVALID> in file <%FILE>\n Valid options are <%VALID>"),
+	ERROR_POTION_MANAGER_MISSING_CONDITION("Potion effect condition misisng for potioneffect <%POTIONEFFECT> in file <%FILE>\n Valid options are <%VALID>"),
 	
 	ERROR_CONFIG_MISSING_PATH("Error, tried to access undefined path <%PATH> in config file '<%CONFIG>'"),
-
+	
 	COMMAND_SYNTAX_ERROR("No command with signature \n\"<%SYNTAX>\""), 
 	;
 

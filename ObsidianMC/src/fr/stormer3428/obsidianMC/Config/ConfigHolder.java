@@ -35,7 +35,7 @@ public class ConfigHolder implements PluginTied{
 
 	@Override
 	public void onPluginEnable() {
-		reloadConfig();	
+		onPluginReload();
 	}
 
 	@Override
