@@ -17,6 +17,20 @@ import fr.stormer3428.obsidianMC.Util.OMCLang;
 import fr.stormer3428.obsidianMC.Util.OMCLogger;
 import fr.stormer3428.obsidianMC.Util.OMCUtil;
 
+/**
+ * Allows for an easy config implementation, only requiring to be given a file. <br>
+ * Upon {@link #onPluginEnable()} and {@link #onPluginReload()}, will check for the config in the config folder, <br>
+ * if it is not found it will import it from the plugin's jar file <br>
+ * <br>
+ * Will also log any accesses to undefined paths, allowing for an easier time debugging at the configuration stage
+ * 
+ * @implNote
+ * implements {@link PluginTied}, remember to register it using {@link OMCPlugin#registerPluginTied(PluginTied)}
+ * 
+ * 
+ * @author stormer3428
+ *
+ */
 public class ConfigHolder implements PluginTied{
 
 	private File configFile;
@@ -33,6 +47,10 @@ public class ConfigHolder implements PluginTied{
 		HOLDERS.add(this);
 	}
 
+	/**
+	 * @implNote
+	 * Calls {@link #onPluginReload()}
+	 */
 	@Override
 	public void onPluginEnable() {
 		onPluginReload();
@@ -41,6 +59,10 @@ public class ConfigHolder implements PluginTied{
 	@Override
 	public void onPluginDisable() {}
 
+	/**
+	 * @implNote
+	 * Calls {@link #reloadConfigs()}
+	 */
 	@Override
 	public void onPluginReload() {
 		reloadConfig();
@@ -53,7 +75,11 @@ public class ConfigHolder implements PluginTied{
 	public YamlConfiguration getConfig() {
 		return config;
 	}
-
+	
+	/**
+	 * Checks for the existence of the config file in the data folder, if it does not exists it will be imported from the jar file.
+	 * Then loads the {@link YamlConfiguration} from {@link #getConfigFile()}
+	 */
 	public void reloadConfig() {
 		if(!configFile.exists())  {
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG_FILE.toString().replace("<%FILE>", configFile.getName()));

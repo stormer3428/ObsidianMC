@@ -5,10 +5,38 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.server.TabCompleteEvent;
 
+import fr.stormer3428.obsidianMC.OMCPlugin;
+import fr.stormer3428.obsidianMC.Manager.OMCCommandManager;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
 import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
+/**
+ * This object represents a Minecraft command in the form of a signature and {@link OMCVariable} system, </br>
+ * Allowing for automated auto-completion generation ({@link TabCompleteEvent}), </br>
+ * argument parsing {@link #execute(CommandSender, ArrayList)}, </br>
+ * as well a permission generation and handling ({@link #getPermissionString()}) </br>
+ * </br>
+ * The permission is ignored by default, making it so the command can be run by anyone, but can be enabled by defining {@link #requiresPermission} in the constructor {@link #OMCCommand(String, boolean)}
+ * </br>
+ * </br>
+ * To implement an alias, simply separate each valid stage name by "%%%", it is important to note that the first one of each stage will be used for the permission generation, it is recommended to have the most verbose alias in first, example: <br>
+ * <code>/somelongcommand%%%slc execute%%%exec%%%ex%%%e %V%</code>
+ * 
+ * @implNote
+ * The signature is made of stages separated by a space, </br> 
+ * <code>/enderchest %P%</code> </br>
+ * Will autocomplete the word "enderchest" as well as complete the player names for the first argument, <br>
+ * <b>Note</b> : it will ONLY match if the typed command is met EXACTLY, </br>
+ * for example this OMCCommand will not trigger to the command <code>/enderchest</code> nor <code>/enderchest stormer3428 someextraArgument</code> </br>
+ * But will trigger on <code>/enderchest someplayerthatdoesntexist</code> As {@link OMCVariable} doesn't automatically check for type but just determines autocompletion
+ * 
+ * @see OMCVariable
+ * @see OMCCommandManager
+ * @author stormer3428
+ *
+ */
 public abstract class OMCCommand {
 
 	public static final String ALIAS_SEPARATOR = "%%%";
@@ -49,13 +77,40 @@ public abstract class OMCCommand {
 		VARIABLES.add(v);
 	}
 
+	/**
+	 * The architecture of this {@link OMCCommand}, defined in {@link #OMCCommand(String)}
+	 */
 	public final ArrayList<String[]> architecture = new ArrayList<>();
 	public final String rawArchitecture;
+	private boolean requiresPermission = false;
 
+	/**
+	 * Will default <code>requiresPermission</code> to false
+	 * 
+	 * @param givenArchitecture
+	 * The architecture of the command
+	 * @see OMCCommand
+	 * @see #OMCCommand(String, boolean)
+	 * @see #getPermissionString()
+	 */
 	public OMCCommand(String givenArchitecture) {
+		this(givenArchitecture, false);
+	}
+
+	/**
+	 * 
+	 * @param givenArchitecture
+	 * The architecture of the command
+	 * @param requiresPermission
+	 * Whether it requires a permission to run
+	 * @see OMCCommand
+	 * @see #getPermissionString()
+	 */
+	public OMCCommand(String givenArchitecture, boolean requiresPermission) {
 		OMCLogger.debug("creating new command from architecture : ["+givenArchitecture+"]");
 		for(String arg : givenArchitecture.split(" ")) architecture.add(arg.split(ALIAS_SEPARATOR));
 		rawArchitecture = givenArchitecture;
+		this.requiresPermission = requiresPermission;
 	}
 
 	public boolean execute(CommandSender sender, String[] args) {
@@ -74,15 +129,51 @@ public abstract class OMCCommand {
 		return execute(sender, variables);
 	}
 
-	public abstract boolean execute(CommandSender sender, ArrayList<String> vars);
-
+	/**
+	 * This function is called whenever the signature of this {@link OMCCommand} matches EXACTLY,
+	 * The intended implementation for providing helpful error messages for missing the arguments is to make a separate {@link OMCCommand} that always returns {@link OMCLogger#error(CommandSender, String)} with the appropriate error message for every stage
+	 * 
+	 * @param sender
+	 * {@link CommandSender} 
+	 * @param args
+	 * {@link ArrayList}
+	 * @return whether the execution went well (used mainly for command blocks)
+	 */
+	public abstract boolean execute(CommandSender sender, ArrayList<String> args);
+	
+	/**
+	 * Returns the corresponding permission string based on the command's signature <br>
+	 * @implNote
+	 * the generation works by appending every non {@link OMCVariable} FIRST alias of each stage separated by a "." to the plugin name, for example </br>
+	 * <br>
+	 * <code>mycommand%%%myc execute%%%ex %V% %P% </code> <br>
+	 * would yield <br>
+	 * <code>myplugin.command.mycommand.execute</code> <br>
+	 * <br>
+	 * and <br>
+	 * <br>
+	 * <code>myothercommand%%%myc create%%%cr execution%%%exec %V%</code> <br>
+	 * would yield <br>
+	 * <code>myplugin.command.myothercommand.create.execution</code>
+	 * @return
+	 */
 	public String getPermissionString() {
-		StringBuilder permission = new StringBuilder();
-		for(String[] stage : architecture) permission.append(String.join(ALIAS_SEPARATOR, stage) + " ");
-		return permission.toString().trim().replace(" ", ".").toLowerCase();
+		StringBuilder permissionString = new StringBuilder();
+		permissionString.append(OMCPlugin.i.getName() + ".command.");
+		archLoop: for(String[] commandArchitectureStage : architecture) {
+			String architectureString = commandArchitectureStage[0];
+			for(OMCVariable variable : VARIABLES) if(variable.matches(architectureString)) continue archLoop;
+			permissionString.append(architectureString + " ");
+		}
+		return permissionString.toString().trim().replace(" ", ".").toLowerCase();
 	}
 
-
+	/**
+	 * 
+	 * @param command
+	 * @param args
+	 * @return whether the given command name and arguments matches with this {@link OMCCommand}
+	 */
 	public boolean matches(String command, String[] args) {
 		if(architecture.size() != args.length + 1) return false;
 		ArrayList<String> fullArgs = new ArrayList<>(args.length + 1);
@@ -100,7 +191,15 @@ public abstract class OMCCommand {
 		}
 		return true;
 	}
-
+	
+	/**
+	 * 
+	 * @param sender
+	 * @param command
+	 * @param args
+	 * @return The list of possible auto-completion possibilities with the given command and args, <br>
+	 * will return an empty list if the sender lacks the appropriate permission and {@link #OMCCommand(String, boolean)} was set to require permission to run
+	 */
 	public ArrayList<String> autocomplete(CommandSender sender, String command, String[] args) {
 		ArrayList<String> list = new ArrayList<>();
 		if(canRun(sender)) return list;
@@ -108,9 +207,9 @@ public abstract class OMCCommand {
 			OMCLogger.debug(architecture.get(0)[0] + " lenght mismatched, expected " + architecture.size() + " but got " + (args.length + 1));
 			return list;
 		}
-		
+
 		OMCLogger.debug(architecture.get(0)[0] + " lenght matched, expected " + architecture.size() + " got " + (args.length + 1));
-		
+
 		ArrayList<String> fullArgs = new ArrayList<>(args.length + 1);
 		fullArgs.add(command);
 		for(String arg : args) fullArgs.add(arg);
@@ -149,15 +248,12 @@ public abstract class OMCCommand {
 		return list;
 	}
 
+	/**
+	 * 
+	 * @param sender
+	 * @return Whether this sender can run this {@link OMCCommand}
+	 */
 	private boolean canRun(CommandSender sender) {
-		return requiresPermission() && !sender.hasPermission(getPermissionString());
-	}
-
-	public boolean requiresPermission() {
-		return false;
-	}
-
-	public String getDescription() {
-		return "No description";
+		return requiresPermission && !sender.hasPermission(getPermissionString());
 	}
 }
