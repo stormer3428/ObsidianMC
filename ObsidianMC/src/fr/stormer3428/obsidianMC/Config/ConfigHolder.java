@@ -90,8 +90,8 @@ public class ConfigHolder implements PluginTied{
 
 	public String getString(String path) {
 		if(config == null) {
-			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString().replace("<%FILE>", configFile.getName()));
-			return path;
+			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString().replace("<%FILE>", configFile.getName()).replace("<%PATH>", path));
+			return "null";
 		}
 		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
 		return config.getString(path);
@@ -133,14 +133,21 @@ public class ConfigHolder implements PluginTied{
 		return config.getLong(path);
 	}
 
+
 	public List<String> getStringList(String path) {
+		return getStringList(path, true);
+	}
+	
+	public List<String> getStringList(String path, boolean ignoreIfNull) {
 		List<String> list = new ArrayList<>();
 		if(config == null) {
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			if(!ignoreIfNull) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getStringList(path));
 		for(int i = 0; i < list.size(); i++) list.set(i, OMCUtil.translateChatColor(list.get(i)));
 		return list;
@@ -152,8 +159,10 @@ public class ConfigHolder implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getIntegerList(path));
 		return list;
 	}
@@ -164,8 +173,10 @@ public class ConfigHolder implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getBooleanList(path));
 		return list;
 	}
@@ -176,8 +187,10 @@ public class ConfigHolder implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getDoubleList(path));
 		return list;
 	}
@@ -188,8 +201,10 @@ public class ConfigHolder implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getFloatList(path));
 		return list;
 	}
@@ -200,8 +215,10 @@ public class ConfigHolder implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getLongList(path));
 		return list;
 	}
@@ -212,8 +229,10 @@ public class ConfigHolder implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getByteList(path));
 		return list;
 	}
@@ -224,8 +243,10 @@ public class ConfigHolder implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getCharacterList(path));
 		return list;
 	}
@@ -236,8 +257,10 @@ public class ConfigHolder implements PluginTied{
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
-		if(!config.contains(path, true)) return list;
-		if(!config.isSet(path)) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+		if(!config.isSet(path)) {
+			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			return list;
+		}
 		list.addAll(config.getShortList(path));
 		return list;
 	}

@@ -24,7 +24,7 @@ public enum OMCLang {
 	ERROR_INVALIDARG_MIN_GT_MAX("Invalid argument, the minimum value <%MIN> is greater than the maximum value <%MAX>"),
 	ERROR_INVALIDARG_MATERIAL("Error, no material with such name '<%MATERIAL>'"),
 	
-	ERROR_MISSING_CONFIG("Error, failed parse <%FILE>"),
+	ERROR_MISSING_CONFIG("Error, failed to parse <%FILE>, tried to read <%PATH>"),
 	ERROR_MISSING_CONFIG_SECTION("Error, missing a configuration section at '<%PATH>'"),
 	ERROR_MISSING_CONFIG_FILE("Warning, File <%FILE> missing, importing from jar. (If this is the first time the plugin is loaded, you may ignore this warning)"),
 	
@@ -37,8 +37,9 @@ public enum OMCLang {
 	ERROR_POWER_MANAGER_REGISTER_NULL_NAME("Tried to register a power with no registry name to the OMCPower manager"),
 
 	ERROR_POTION_MANAGER_NO_POTIONEFFECT("No potion effect with such name : <%INVALID> in file <%FILE>\n Valid options are <%VALID>"),
+	ERROR_POTION_MANAGER_MISSING_POTIONEFFECT("Missing potion effect <%POTIONEFFECT> in file <%FILE>"),
 	ERROR_POTION_MANAGER_NO_CONDITION("No potion effect condition with such name : <%INVALID> in file <%FILE>\n Valid options are <%VALID>"),
-	ERROR_POTION_MANAGER_MISSING_CONDITION("Potion effect condition misisng for potioneffect <%POTIONEFFECT> in file <%FILE>\n Valid options are <%VALID>"),
+	ERROR_POTION_MANAGER_MISSING_CONDITION("Potion effect condition missing for potioneffect <%POTIONEFFECT> in file <%FILE>\n Valid options are <%VALID>"),
 	
 	ERROR_CONFIG_MISSING_PATH("Error, tried to access undefined path <%PATH> in config file '<%CONFIG>'"),
 	

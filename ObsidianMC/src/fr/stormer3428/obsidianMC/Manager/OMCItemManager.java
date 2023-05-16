@@ -25,6 +25,7 @@ public abstract class OMCItemManager extends ConfigHolder implements Listener{
 	
 	@Override
 	public void onPluginEnable() {
+		super.onPluginEnable();
 		OMCPlugin.i.getServer().getPluginManager().registerEvents(this, OMCPlugin.i);
 	}
 	

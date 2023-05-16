@@ -45,16 +45,20 @@ public class OMCPotionEffect implements PluginTied{
 		amplifier = 0;
 
 		String potionEffectName = getManager().getString(path + ".type");
+		if(potionEffectName == null) {
+			OMCLogger.systemError(formatFile(OMCLang.ERROR_POTION_MANAGER_MISSING_POTIONEFFECT.toString()));
+			return;
+		}
 		effectType = PotionEffectType.getByName(potionEffectName);
 		if(effectType == null) {
 			OMCLogger.systemError(formatPotioneffect(OMCLang.ERROR_POTION_MANAGER_NO_POTIONEFFECT.toString(), potionEffectName));
 			return;
 		}
 
-		amplifier = getManager().getInt(path + "amplifier"); OMCLogger.debug("amplifier : " + amplifier);
-		duration = getManager().getInt(path + "duration"); if(duration == 0) duration = potionEffectManager.getDefaultPotionDuration(); OMCLogger.debug("duration : " + duration);
+		amplifier = getManager().getInt(path + ".amplifier"); OMCLogger.debug("amplifier : " + amplifier);
+		duration = getManager().getInt(path + ".duration"); if(duration == 0) duration = potionEffectManager.getDefaultPotionDuration(); OMCLogger.debug("duration : " + duration);
 
-		for(String conditionName : getManager().getStringList(path + "conditions")) {
+		for(String conditionName : getManager().getStringList(path + ".conditions")) {
 			OMCPotionEffectCondition condition = OMCPotionEffectCondition.fromName(conditionName);
 
 			if(condition == null) {
@@ -90,22 +94,27 @@ public class OMCPotionEffect implements PluginTied{
 
 	private static String validConditions(String conditionName) {
 		StringBuilder SB = new StringBuilder();
-		for(OMCPotionEffectCondition c : OMCPotionEffectCondition.values()) SB.append("\n" + c.name() + (c.name().toLowerCase().contains(conditionName) ? " <= (It might be this one)" : ""));
+		for(OMCPotionEffectCondition c : OMCPotionEffectCondition.values()) SB.append("\n" + c.name() + (conditionName != null && c.name().toLowerCase().contains(conditionName) ? " <= (It might be this one)" : ""));
 		return SB.toString();
 	}
 
 	private static String validPotioneffects(String potioneffectName) {
 		StringBuilder SB = new StringBuilder();
-		for(PotionEffectType p : PotionEffectType.values()) SB.append("\n" + p.getName() + (p.getName().toLowerCase().contains(potioneffectName) ? " <= (It might be this one)" : ""));
+		for(PotionEffectType p : PotionEffectType.values()) SB.append("\n" + p.getName() + (potioneffectName != null && p.getName().toLowerCase().contains(potioneffectName) ? " <= (It might be this one)" : ""));
 		return SB.toString();
 	}
-
+	
 	private String formatPotioneffect(String toFormat, String potionEffectName) {
-		return toFormat.replace("<%VALID>", validPotioneffects(potionEffectName)).replace("<%INVALID>", potionEffectName).replace("<%FILE>", getManager().getConfigFile().getName());
+		return formatFile(toFormat.replace("<%VALID>", validPotioneffects(potionEffectName)).replace("<%INVALID>", potionEffectName + ""));
 	}
 
 	private String formatConditions(String toFormat, String conditionName) {
-		return toFormat.replace("<%VALID>", validConditions(conditionName)).replace("<%INVALID>", conditionName).replace("<%FILE>", getManager().getConfigFile().getName());
+		return formatFile(toFormat.replace("<%VALID>", validConditions(conditionName)).replace("<%INVALID>", conditionName + ""));
+	}
+	
+
+	private String formatFile(String toFormat) {
+		return toFormat.replace("<%FILE>", getManager().getConfigFile().getName()).replace("<%POTIONEFFECT>", path);
 	}
 
 }
