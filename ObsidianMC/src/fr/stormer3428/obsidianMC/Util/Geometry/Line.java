@@ -7,7 +7,7 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
-public class Line {
+public class Line implements Drawable{
 
 	private Vector a;
 	private Vector b;
@@ -43,11 +43,8 @@ public class Line {
 	public void drawPoint(World world, Vector location) {
 		world.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, null, true);
 	}
-	
-	public void draw(Location location) {
-		draw(location, 1.0);
-	}
 
+	@Override
 	public void draw(Location location, double scale) {
 		World world = location.getWorld();
 		Vector locationVector = location.toVector();
@@ -67,35 +64,41 @@ public class Line {
 		for(int c = amount; c > 0; c--) points.add(point.add(delta).clone());
 		return points;
 	}
-	
+
+	@Override
 	public Line rotateAroundAxis(Vector axis, double radians) {
 		a.rotateAroundAxis(axis, radians);
 		b.rotateAroundAxis(axis, radians);
 		return this;
 	}
-	
+
+	@Override
 	public Line rotateAroundX(double radians) {
 		a.rotateAroundX(radians);
 		b.rotateAroundX(radians);
 		return this;
 	}
-	
+
+	@Override
 	public Line rotateAroundY(double radians) {
 		a.rotateAroundY(radians);
 		b.rotateAroundY(radians);
 		return this;
 	}
-	
+
+	@Override
 	public Line rotateAroundZ(double radians) {
 		a.rotateAroundZ(radians);
 		b.rotateAroundZ(radians);
 		return this;
 	}
 
+	@Override
 	public Particle getParticle() {
 		return particle;
 	}
 
+	@Override
 	public Line setParticle(Particle particle) {
 		this.particle = particle;
 		return this;

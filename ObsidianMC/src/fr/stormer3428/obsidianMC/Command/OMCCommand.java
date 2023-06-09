@@ -82,7 +82,7 @@ public abstract class OMCCommand {
 	 */
 	public final ArrayList<String[]> architecture = new ArrayList<>();
 	public final String rawArchitecture;
-	private boolean requiresPermission = false;
+	protected boolean requiresPermission = false;
 
 	/**
 	 * Will default <code>requiresPermission</code> to false
@@ -114,7 +114,7 @@ public abstract class OMCCommand {
 	}
 
 	public boolean execute(CommandSender sender, String[] args) {
-		if(canRun(sender)) return OMCLogger.error(sender, OMCLang.ERROR_GENERIC_NOPERMISSION.toString().replace("<%PERMISSION>", getPermissionString()));
+		if(!canRun(sender)) return OMCLogger.error(sender, OMCLang.ERROR_GENERIC_NOPERMISSION.toString().replace("<%PERMISSION>", getPermissionString()));
 		ArrayList<String> variables = new ArrayList<>();
 		int i = 0;
 		for(String arg : args) {
@@ -202,7 +202,7 @@ public abstract class OMCCommand {
 	 */
 	public ArrayList<String> autocomplete(CommandSender sender, String command, String[] args) {
 		ArrayList<String> list = new ArrayList<>();
-		if(canRun(sender)) return list;
+		if(!canRun(sender)) return list;
 		if(architecture.size() < args.length + 1) {
 			OMCLogger.debug(architecture.get(0)[0] + " lenght mismatched, expected " + architecture.size() + " but got " + (args.length + 1));
 			return list;
@@ -253,7 +253,7 @@ public abstract class OMCCommand {
 	 * @param sender
 	 * @return Whether this sender can run this {@link OMCCommand}
 	 */
-	private boolean canRun(CommandSender sender) {
-		return requiresPermission && !sender.hasPermission(getPermissionString());
+	protected boolean canRun(CommandSender sender) {
+		return !requiresPermission || sender.hasPermission(getPermissionString());
 	}
 }

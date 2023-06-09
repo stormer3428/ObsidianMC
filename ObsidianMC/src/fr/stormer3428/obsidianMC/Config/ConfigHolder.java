@@ -1,6 +1,10 @@
 package fr.stormer3428.obsidianMC.Config;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +38,7 @@ import fr.stormer3428.obsidianMC.Util.OMCUtil;
 public class ConfigHolder implements PluginTied{
 
 	private File configFile;
+	private String resourcePath;
 	private YamlConfiguration config;
 
 	private static final ArrayList<ConfigHolder> HOLDERS = new ArrayList<>();
@@ -43,7 +48,13 @@ public class ConfigHolder implements PluginTied{
 	}
 
 	public ConfigHolder(File configFile) {
+		this(configFile, configFile.getName());
+	}
+
+	public ConfigHolder(File configFile, String resourceName) {
 		this.configFile = configFile;
+		this.resourcePath = resourceName;
+		reloadConfig();
 		HOLDERS.add(this);
 	}
 
@@ -76,6 +87,14 @@ public class ConfigHolder implements PluginTied{
 		return config;
 	}
 	
+	public void saveConfig() {
+		try {
+			getConfig().save(getConfigFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Checks for the existence of the config file in the data folder, if it does not exists it will be imported from the jar file.
 	 * Then loads the {@link YamlConfiguration} from {@link #getConfigFile()}
@@ -83,10 +102,44 @@ public class ConfigHolder implements PluginTied{
 	public void reloadConfig() {
 		if(!configFile.exists())  {
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG_FILE.toString().replace("<%FILE>", configFile.getName()));
-			OMCPlugin.i.saveResource(configFile.getName(), false);
+			createConfigFile(false);
 		}
 		config = YamlConfiguration.loadConfiguration(configFile);
 	}
+	
+	public void createConfigFile(boolean force) {
+		File dataFolder = OMCPlugin.i.getDataFolder();
+		
+        InputStream in = OMCPlugin.i.getResource(resourcePath);
+//        if (in == null) {
+//            throw new IllegalArgumentException("Failed to find config '" + resourcePath + "' inside of the jar file");
+//        }
+
+        File outFile = new File(dataFolder, resourcePath);
+        int lastIndex = resourcePath.lastIndexOf('/');
+        File outDir = new File(dataFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+
+        if (!outDir.exists()) {
+            outDir.mkdirs();
+        }
+        
+        if(in != null) try {
+            if (!outFile.exists() || force) {
+                OutputStream out = new FileOutputStream(outFile);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                out.close();
+                in.close();
+            } else {
+            	OMCLogger.systemError("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+            }
+        } catch (IOException ex) {
+        	OMCLogger.systemError("Could not save " + outFile.getName() + " to " + outFile);
+        }
+    }
 
 	public String getString(String path) {
 		if(config == null) {
@@ -152,15 +205,19 @@ public class ConfigHolder implements PluginTied{
 		for(int i = 0; i < list.size(); i++) list.set(i, OMCUtil.translateChatColor(list.get(i)));
 		return list;
 	}
-
+	
 	public List<Integer> getIntegerList(String path) {
+		return getIntegerList(path, false);
+	}
+
+	public List<Integer> getIntegerList(String path, boolean ignoreIfNull) {
 		List<Integer> list = new ArrayList<>();
 		if(config == null) {
 			OMCLogger.systemError(OMCLang.ERROR_MISSING_CONFIG.toString());
 			return list;
 		}
 		if(!config.isSet(path)) {
-			OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
+			if(!ignoreIfNull) OMCLogger.systemError(OMCLang.ERROR_CONFIG_MISSING_PATH.toString().replace("<%PATH>", config.getCurrentPath().isBlank() ? path : String.join(".", config.getCurrentPath(), path)).replace("<%CONFIG>", getConfigFile().getName()));
 			return list;
 		}
 		list.addAll(config.getIntegerList(path));

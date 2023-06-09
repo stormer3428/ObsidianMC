@@ -75,7 +75,7 @@ public class SMPItem implements OMCItem {
 	 * @see #getCMD()
 	 */
 	public boolean hasCMD() {
-		return !itemManager.getIntegerList(registryName + "." + KEY_CMDS).isEmpty();
+		return !itemManager.getIntegerList(registryName + "." + KEY_CMDS, true).isEmpty();
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class SMPItem implements OMCItem {
 	 * @see #hasCMD()
 	 */
 	public int getCMD(int CMDId) {
-		List<Integer> CMDs = itemManager.getIntegerList(registryName + "." + KEY_CMDS);
+		List<Integer> CMDs = itemManager.getIntegerList(registryName + "." + KEY_CMDS, true);
 		if(CMDId < 0 || CMDId >= CMDs.size()) {
 			OMCLogger.systemError(OMCLang.ERROR_INVALID_CMD_ID.toString().replace("<CMDID>", CMDId + "").replace("<CMDS>", CMDs.toString().replace("<SMPITEM>", getRegistryName())));
 			return 0;

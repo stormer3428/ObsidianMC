@@ -5,7 +5,7 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
-public class Point {
+public class Point implements Drawable{
 
 	private Vector location;
 	private Particle particle = Particle.CRIT_MAGIC;
@@ -14,36 +14,33 @@ public class Point {
 	private float particleSpreadY = 0;
 	private float particleSpreadZ = 0;
 	private float particleSpeed = 0;
-	
-	public void draw(World world) {
-		world.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, null, true);
-	}
 
+	@Override
 	public void draw(Location location, double scale) {
 		World world = location.getWorld();
 		Location particleLoc = location.clone().add(this.location.clone().multiply(scale));
 		world.spawnParticle(particle, particleLoc.getX(), particleLoc.getY(), particleLoc.getZ(), particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, null, true);
 	}
-	
-	public void draw(Location location) {
-		draw(location, 1.0);
-	}
-	
+
+	@Override
 	public Point rotateAroundAxis(Vector axis, double radians) {
 		location.rotateAroundAxis(axis, radians);
 		return this;
 	}
-	
+
+	@Override
 	public Point rotateAroundX(double radians) {
 		location.rotateAroundX(radians);
 		return this;
 	}
-	
+
+	@Override
 	public Point rotateAroundY(double radians) {
 		location.rotateAroundY(radians);
 		return this;
 	}
-	
+
+	@Override
 	public Point rotateAroundZ(double radians) {
 		location.rotateAroundZ(radians);
 		return this;
@@ -57,11 +54,13 @@ public class Point {
 		this.location = location;
 		return this;
 	}
-	
+
+	@Override
 	public Particle getParticle() {
 		return particle;
 	}
 
+	@Override
 	public Point setParticle(Particle particle) {
 		this.particle = particle;
 		return this;
