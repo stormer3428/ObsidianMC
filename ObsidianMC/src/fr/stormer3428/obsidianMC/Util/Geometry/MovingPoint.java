@@ -9,8 +9,10 @@ public class MovingPoint implements Drawable{
 
 	private Vector location;
 	private Particle particle = Particle.CRIT_MAGIC;
+	private Object particleData = null;
 	private Vector particleDirection = new Vector(0,0,0);
 	private Vector particleOffsetDirection = new Vector(0,0,0);
+	private boolean forceRender = true;
 
 	@Override
 	public void draw(Location location, double scale) {
@@ -21,7 +23,7 @@ public class MovingPoint implements Drawable{
 				particleDirection.getX() + particleOffsetDirection.getX(), 
 				particleDirection.getY() + particleOffsetDirection.getY(), 
 				particleDirection.getZ() + particleOffsetDirection.getZ(), 
-				particleDirection.clone().add(particleOffsetDirection).length(), null, true);
+				particleDirection.clone().add(particleOffsetDirection).length(), particleData, forceRender);
 	}
 
 	public void draw(Location location) {
@@ -97,7 +99,28 @@ public class MovingPoint implements Drawable{
 		this.particleOffsetDirection = particleOffsetDirection;
 		return this;
 	}
+	
+	@Override
+	public MovingPoint setParticleData(Object particleData) {
+		this.particleData = particleData;
+		return this;
+	}
 
+	@Override
+	public MovingPoint setParticleSpeed(float particleSpeed) {
+		this.particleDirection.normalize().multiply(particleSpeed);
+		return this;
+	}
+	
+	@Override
+	public MovingPoint setForceRendering(boolean forceRender) {
+		this.forceRender = forceRender;
+		return this;
+	}
 
+	@Override
+	public boolean isForceRendering() {
+		return forceRender;
+	}
 
 }

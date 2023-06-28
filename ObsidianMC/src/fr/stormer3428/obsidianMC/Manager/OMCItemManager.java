@@ -29,16 +29,6 @@ public abstract class OMCItemManager extends ConfigHolder implements Listener{
 		OMCPlugin.i.getServer().getPluginManager().registerEvents(this, OMCPlugin.i);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * Creates a {@link OMCVariable} with the given signature that completes for registered {@link OMCItem}
 	 * 

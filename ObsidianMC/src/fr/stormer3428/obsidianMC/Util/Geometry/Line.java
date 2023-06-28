@@ -12,12 +12,14 @@ public class Line implements Drawable{
 	private Vector a;
 	private Vector b;
 	private Particle particle = Particle.CRIT_MAGIC;
+	private Object particleData = null;
 	private int particleAmount = 1;
 	private float particleSpreadX = 0;
 	private float particleSpreadY = 0;
 	private float particleSpreadZ = 0;
 	private float particleSpeed = 0;
 	private double resolution = 0.1d;
+	private boolean forceRender = true;
 	
 	public Line(Vector a, Vector b) {
 		this.a = a.clone();
@@ -41,7 +43,7 @@ public class Line implements Drawable{
 	}
 	
 	public void drawPoint(World world, Vector location) {
-		world.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, null, true);
+		world.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, particleData, forceRender);
 	}
 
 	@Override
@@ -147,5 +149,22 @@ public class Line implements Drawable{
 	public Line setParticleSpeed(float particleSpeed) {
 		this.particleSpeed = particleSpeed;
 		return this;
+	}
+
+	@Override
+	public Line setParticleData(Object particleData) {
+		this.particleData = particleData;
+		return this;
+	}
+
+	@Override
+	public Line setForceRendering(boolean forceRender) {
+		this.forceRender = forceRender;
+		return this;
+	}
+
+	@Override
+	public boolean isForceRendering() {
+		return forceRender;
 	}
 }

@@ -7,19 +7,21 @@ import org.bukkit.util.Vector;
 
 public class Point implements Drawable{
 
-	private Vector location;
-	private Particle particle = Particle.CRIT_MAGIC;
-	private int particleAmount = 1;
-	private float particleSpreadX = 0;
-	private float particleSpreadY = 0;
-	private float particleSpreadZ = 0;
-	private float particleSpeed = 0;
+	protected Vector location;
+	protected Particle particle = Particle.CRIT_MAGIC;
+	protected Object particleData = null;
+	protected int particleAmount = 1;
+	protected float particleSpreadX = 0;
+	protected float particleSpreadY = 0;
+	protected float particleSpreadZ = 0;
+	protected float particleSpeed = 0;
+	protected boolean forceRender = true;
 
 	@Override
 	public void draw(Location location, double scale) {
 		World world = location.getWorld();
 		Location particleLoc = location.clone().add(this.location.clone().multiply(scale));
-		world.spawnParticle(particle, particleLoc.getX(), particleLoc.getY(), particleLoc.getZ(), particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, null, true);
+		world.spawnParticle(particle, particleLoc, particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, particleData, forceRender);
 	}
 
 	@Override
@@ -111,4 +113,20 @@ public class Point implements Drawable{
 		return this;
 	}
 	
+	@Override
+	public Point setParticleData(Object particleData) {
+		this.particleData = particleData;
+		return this;
+	}
+	
+	@Override
+	public Point setForceRendering(boolean forceRender) {
+		this.forceRender = forceRender;
+		return this;
+	}
+
+	@Override
+	public boolean isForceRendering() {
+		return forceRender;
+	}
 }

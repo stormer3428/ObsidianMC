@@ -70,15 +70,43 @@ public class Geometry {
 		return direction;
 	}
 	
+
+	public Geometry setParticleSpeed(float speed) {
+		for(Drawable drawable : drawables) drawable.setParticleSpeed(speed);
+		return this;
+	}
+	
 	public Geometry setParticle(Particle particle) {
 		for(Drawable drawable : drawables) drawable.setParticle(particle);
 		return this;
 	}
 
+	public <T> Geometry setParticleData(T particleData) {
+		for(Drawable drawable : drawables) drawable.setParticleData(particleData);
+		return this;
+	}
+
+	public Geometry setForceRendering(boolean forceRender) {
+		for(Drawable drawable : drawables) drawable.setForceRendering(forceRender);
+		return this;
+	}
+	
+	private ArrayList<Drawable> getDrawables() {
+		return drawables;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <T extends Drawable>  ArrayList<T> getDrawables(Class<T> clazz) {
 		ArrayList<T> list = new ArrayList<>();
 		for(Drawable drawable : drawables) if(clazz.isInstance(drawable)) list.add((T) drawable);
 		return list;
 	}
+
+	public Geometry merge(Geometry other) {
+		for(Drawable drawable : other.getDrawables()) add(drawable);
+		return this;
+	}
+
+
+
 }
