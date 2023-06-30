@@ -41,7 +41,7 @@ public abstract class OMCPower implements PluginTied, Listener{
 		empower(it, p);
 	}
 
-	private void empower(ItemStack it, Player p) {
+	protected void empower(ItemStack it, Player p) {
 		empowered.add(p.getUniqueId());
 		onEmpower(it, p);
 		new BukkitRunnable() {

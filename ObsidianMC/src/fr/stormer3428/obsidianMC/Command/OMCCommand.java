@@ -3,6 +3,7 @@ package fr.stormer3428.obsidianMC.Command;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.TabCompleteEvent;
@@ -67,6 +68,16 @@ public abstract class OMCCommand {
 				final String lower = incomplete.toLowerCase();
 				if("true".startsWith(lower)) list.add("True");
 				if("false".startsWith(lower)) list.add("False");
+				return list;
+			}
+		});
+
+		VARIABLES.add(new OMCVariable("%MATERIAL%") {
+			@Override
+			protected ArrayList<String> complete(CommandSender sender, String incomplete) {
+				final ArrayList<String> list = new ArrayList<>();
+				final String lower = incomplete.toLowerCase();
+				for(Material material : Material.values()) if(material.name().toLowerCase().startsWith(lower)) list.add(material.name());
 				return list;
 			}
 		});
