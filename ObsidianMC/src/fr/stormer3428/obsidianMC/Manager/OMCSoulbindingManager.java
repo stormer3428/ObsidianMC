@@ -12,6 +12,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
@@ -21,11 +22,11 @@ import fr.stormer3428.obsidianMC.OMCPlugin;
 import fr.stormer3428.obsidianMC.Config.PluginTied;
 
 public abstract class OMCSoulbindingManager implements PluginTied, Listener{
-		
+
 	protected abstract boolean isSoulboundItem(ItemStack it);
 	protected abstract boolean isSuitable(ArrayList<ItemStack> soulboundItems);
 	protected abstract void fixInventory(ArrayList<ItemStack> soulboundItems, Player p);
-	
+
 	@Override
 	public void onPluginEnable() {
 		OMCPlugin.i.getServer().getPluginManager().registerEvents(this, OMCPlugin.i);
@@ -42,7 +43,7 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 		if(!isSoulboundItem(e.getItemDrop().getItemStack())) return;
 		e.setCancelled(true);
 	}
-	
+
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent e) {
 		validate((Player) e.getPlayer());
@@ -52,7 +53,7 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 	public void onInventoryOpen(InventoryOpenEvent e) {
 		validate((Player) e.getPlayer());
 	}
-	
+
 	@EventHandler
 	public void inventoryClick(InventoryClickEvent e) {
 		Inventory top = e.getView().getTopInventory();
@@ -67,7 +68,7 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 			return;
 		}
 	}
-	
+
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
 		ArrayList<ItemStack> toRemove = new ArrayList<>();
@@ -78,13 +79,13 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 			drops.remove(item);
 		}
 	}
-	
+
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
 		validate(p);
 	}
-	
+
 	@EventHandler
 	public void onInteract(PlayerInteractAtEntityEvent e) {
 		Player p = e.getPlayer();
@@ -92,15 +93,29 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 		if(it == null || !isSoulboundItem(it)) return;
 		e.setCancelled(true);
 	}
-	
-	public boolean validate(Player p) {
+
+	@EventHandler
+	public void onInteract(PlayerInteractEntityEvent e) {
+		Player p = e.getPlayer();
+		ItemStack it = p.getInventory().getItem(e.getHand());
+		if(it == null || !isSoulboundItem(it)) return;
+		e.setCancelled(true);
+	}
+
+	public ArrayList<ItemStack> getSoulboundItems(Player p){
 		ArrayList<ItemStack> soulboundItems = new ArrayList<>(); 
-		
+
 		for(ItemStack it : p.getInventory().getContents()) {
 			if(it == null) continue;
 			if(!isSoulboundItem(it)) continue;
 			soulboundItems.add(it);
 		}
+		return soulboundItems;
+	}
+
+	public boolean validate(Player p) {
+		ArrayList<ItemStack> soulboundItems = getSoulboundItems(p);
+		
 		if(isSuitable(soulboundItems)) return true;
 		fixInventory(soulboundItems, p);
 		return false;

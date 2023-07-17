@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class OMCLogger {
 	
@@ -75,5 +77,9 @@ public class OMCLogger {
 		return false;
 	}
 
+	public static boolean actionBar(Player p, String message) {
+		p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(OMCUtil.translateChatColor(message)));
+		return true;
+	}
 
 }

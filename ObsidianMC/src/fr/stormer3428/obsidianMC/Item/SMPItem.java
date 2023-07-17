@@ -133,7 +133,7 @@ public class SMPItem implements OMCItem {
 		itm.setDisplayName(ChatColor.RESET + getDisplayName());
 		if(hasCMD()) itm.setCustomModelData(getCMD());
 		List<String> lore = itemManager.getStringList(registryName + "." + KEY_LORE);
-		if(getItemManager().getBoolean(registryName + "." + KEY_GLINT)) {
+		if(getItemManager().getConfig().getBoolean(registryName + "." + KEY_GLINT)) {
 			itm.addEnchant(Enchantment.DAMAGE_ARTHROPODS, 5, false);
 			itm.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		}
@@ -170,6 +170,15 @@ public class SMPItem implements OMCItem {
 	 */
 	public List<Recipe> getRecipes() {
 		return new ArrayList<>();
+	}
+	
+	/**
+	 * 
+	 * @param The desired key from the item's configurationSection
+	 * @return The formatted path to that value
+	 */
+	public String path(String innerPath) {
+		return getRegistryName() + "." + innerPath;
 	}
 
 }

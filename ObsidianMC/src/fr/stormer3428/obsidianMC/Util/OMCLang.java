@@ -44,6 +44,8 @@ public enum OMCLang {
 	ERROR_CONFIG_MISSING_PATH("Error, tried to access undefined path <%PATH> in config file '<%CONFIG>'"),
 	
 	COMMAND_SYNTAX_ERROR("No command with signature \n\"<%SYNTAX>\""), 
+	
+	NOTHING_CHANGED("Nothing changed"), 
 	;
 
 	private String path;

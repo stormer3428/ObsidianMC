@@ -12,12 +12,19 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import net.md_5.bungee.api.ChatColor;
 
 public class OMCUtil {
 
+	public static Transformation getCenteredBlockTransformation() {
+		return new Transformation(new Vector3f(-.5f,-.5f,-.5f), new AxisAngle4f(), new Vector3f(1,1,1), new AxisAngle4f());
+	}
+	
 	public static float noteBlockToPitch(int note) {
 		return (float) ((Math.pow(2, note/12f))/2f);
 	}

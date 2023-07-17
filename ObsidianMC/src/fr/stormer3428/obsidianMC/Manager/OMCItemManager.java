@@ -107,6 +107,7 @@ public abstract class OMCItemManager extends ConfigHolder implements Listener{
 	 * @see #fromName(String)
 	 */
 	public OMCItem fromItemStack(ItemStack item) {
+		if(item == null) return null;
 		for(OMCItem omcItem : registeredItems) if(omcItem.matches(item)) return omcItem;
 		return null;
 	}

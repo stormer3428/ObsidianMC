@@ -5,10 +5,14 @@ import java.util.HashSet;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import fr.stormer3428.obsidianMC.Config.AutoConfig;
+import fr.stormer3428.obsidianMC.Config.AutoconfigParser;
+import fr.stormer3428.obsidianMC.Config.BooleanConfigValue;
 import fr.stormer3428.obsidianMC.Config.PluginTied;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
 import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
+@AutoConfig
 public abstract class OMCPlugin extends JavaPlugin{
 
     public static OMCPlugin i;
@@ -16,27 +20,17 @@ public abstract class OMCPlugin extends JavaPlugin{
 
 	public OMCPlugin() {
 		i = this;
+		autoconfigParser.registerAutoConfigClass(OMCPlugin.class);
 	}
-	
-//	private File file;
-//	private YamlConfiguration config;
 
+	@BooleanConfigValue(path = "debug")
 	public static boolean DEBUG = false;
 
+	public final AutoconfigParser autoconfigParser = new AutoconfigParser();;
 	protected final HashSet<PluginTied> pluginTieds = new HashSet<>();
 
 	@Override
 	public void onEnable() {
-//		file = new File(OMCPlugin.i.getDataFolder(), "config.yml");
-//		config = YamlConfiguration.loadConfiguration(file);
-		OMCLogger.debug("loading native lang");
-		OMCLang.loadFromConfig();
-		OMCLogger.debug("loading stranger lang");
-		loadLangFromConfig();
-		OMCLogger.debug("requesting logger instanciation");
-		instantiateLogger();
-		loadConfig();	
-		OMCLogger.debug("requestiong a reload");
 		this.reload();
 		OMCLogger.debug("registering native plugin tied classes");
 		registerNativePluginTied();
@@ -57,7 +51,8 @@ public abstract class OMCPlugin extends JavaPlugin{
 		loadLangFromConfig();
 		OMCLogger.debug("requesting logger instanciation");
 		instantiateLogger();
-		loadConfig();
+		OMCLogger.debug("injecting config values into classes");
+		autoconfigParser.updateValues();
 		OMCLogger.debug("reloading plugin tied");
 		for(PluginTied pluginTied : new ArrayList<>(pluginTieds)) pluginTied.onPluginReload();
 	}
@@ -68,26 +63,6 @@ public abstract class OMCPlugin extends JavaPlugin{
 		for(PluginTied pluginTied : pluginTieds) pluginTied.onPluginDisable();	
 		OMCLogger.debug("reguesting disabling of child plugin");
 		onObsidianDisable();
-	}
-
-//	@Override
-//	public FileConfiguration getConfig() {
-//		return config;
-//	}
-//
-//	@Override
-//	public void saveConfig() {
-//		try {
-//			getConfig().save(file);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-	public void loadConfig() {
-		OMCLogger.debug("loading config");
-		getConfig().options().copyDefaults(true);
-		saveConfig();
 	}
 
 	public void registerPluginTied(PluginTied pluginTied) {

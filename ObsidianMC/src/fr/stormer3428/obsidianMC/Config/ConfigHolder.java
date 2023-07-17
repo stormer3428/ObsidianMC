@@ -86,7 +86,7 @@ public class ConfigHolder implements PluginTied{
 	public YamlConfiguration getConfig() {
 		return config;
 	}
-	
+
 	public void saveConfig() {
 		try {
 			getConfig().save(getConfigFile());
@@ -94,7 +94,7 @@ public class ConfigHolder implements PluginTied{
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Checks for the existence of the config file in the data folder, if it does not exists it will be imported from the jar file.
 	 * Then loads the {@link YamlConfiguration} from {@link #getConfigFile()}
@@ -106,40 +106,47 @@ public class ConfigHolder implements PluginTied{
 		}
 		config = YamlConfiguration.loadConfiguration(configFile);
 	}
-	
+
 	public void createConfigFile(boolean force) {
 		File dataFolder = OMCPlugin.i.getDataFolder();
-		
-        InputStream in = OMCPlugin.i.getResource(resourcePath);
-//        if (in == null) {
-//            throw new IllegalArgumentException("Failed to find config '" + resourcePath + "' inside of the jar file");
-//        }
 
-        File outFile = new File(dataFolder, resourcePath);
-        int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(dataFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+		InputStream in = OMCPlugin.i.getResource(resourcePath);
+		//        if (in == null) {
+		//            throw new IllegalArgumentException("Failed to find config '" + resourcePath + "' inside of the jar file");
+		//        }
 
-        if (!outDir.exists()) {
-            outDir.mkdirs();
-        }
-        
-        if(in != null) try {
-            if (!outFile.exists() || force) {
-                OutputStream out = new FileOutputStream(outFile);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.close();
-                in.close();
-            } else {
-            	OMCLogger.systemError("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
-            }
-        } catch (IOException ex) {
-        	OMCLogger.systemError("Could not save " + outFile.getName() + " to " + outFile);
-        }
-    }
+		File outFile = new File(dataFolder, resourcePath);
+		if(!outFile.exists())
+			try {
+				outFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		int lastIndex = resourcePath.lastIndexOf('/');
+		File outDir = new File(dataFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+
+		if (!outDir.exists()) {
+			outDir.mkdirs();
+		}
+
+		if(in != null) try {
+
+			if (!outFile.exists() || force) {
+				OutputStream out = new FileOutputStream(outFile);
+				byte[] buf = new byte[1024];
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+				out.close();
+				in.close();
+			} else {
+				OMCLogger.systemError("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+			}
+		} catch (IOException ex) {
+			OMCLogger.systemError("Could not save " + outFile.getName() + " to " + outFile);
+		}
+	}
 
 	public String getString(String path) {
 		if(config == null) {
@@ -190,7 +197,7 @@ public class ConfigHolder implements PluginTied{
 	public List<String> getStringList(String path) {
 		return getStringList(path, true);
 	}
-	
+
 	public List<String> getStringList(String path, boolean ignoreIfNull) {
 		List<String> list = new ArrayList<>();
 		if(config == null) {
@@ -205,7 +212,7 @@ public class ConfigHolder implements PluginTied{
 		for(int i = 0; i < list.size(); i++) list.set(i, OMCUtil.translateChatColor(list.get(i)));
 		return list;
 	}
-	
+
 	public List<Integer> getIntegerList(String path) {
 		return getIntegerList(path, false);
 	}

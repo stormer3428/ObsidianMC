@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.stormer3428</groupId>
 	<artifactId>ObsidianMC</artifactId>
-	<version>0.3.56-SNAPSHOT</version>
+	<version>0.3.57-SNAPSHOT</version>
 	<name>ObsidianMC</name>
 	<description>A library for plugins made by stormer3428</description>
 	<packaging>jar</packaging>
@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.19.2-R0.1-SNAPSHOT</version>
+			<version>1.20.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
