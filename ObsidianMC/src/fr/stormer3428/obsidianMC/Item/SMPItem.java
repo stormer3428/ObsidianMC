@@ -149,6 +149,7 @@ public class SMPItem implements OMCItem {
 	 */
 	@Override
 	public boolean matches(ItemStack it) {
+		if(it == null) return false;
 		if(it.getType() != getMaterial()) return false;
 		if(it.getItemMeta() == null) return false;
 		if(it.getItemMeta().hasCustomModelData() != hasCMD()) return false;

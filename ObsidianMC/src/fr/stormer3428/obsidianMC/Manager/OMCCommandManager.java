@@ -77,5 +77,4 @@ public abstract class OMCCommandManager implements CommandExecutor, TabCompleter
 		for(OMCCommand c : command)
 		COMMANDS.add(c);
 	}
-
 }

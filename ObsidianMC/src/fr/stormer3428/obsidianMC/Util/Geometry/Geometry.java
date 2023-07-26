@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.util.Vector;
 
+import fr.stormer3428.obsidianMC.Util.OMCLogger;
+
 public class Geometry {
 
 	ArrayList<Drawable> drawables = new ArrayList<>();
@@ -31,6 +33,12 @@ public class Geometry {
 	}
 	
 	public Geometry rotateAroundAxis(Vector axis, double radians) {
+		try {
+			axis.checkFinite();
+		}catch (Exception e) {
+			OMCLogger.systemError("Error, attempted rotate around NaN (" + axis + ")");
+			return this;
+		}
 		for(Drawable drawable : drawables) drawable.rotateAroundAxis(axis, radians);
 		direction.rotateAroundAxis(axis, radians);
 		return this;
@@ -59,9 +67,18 @@ public class Geometry {
 		try {
 			newDirection.checkFinite();
 		}catch (Exception e) {
+			OMCLogger.systemError("Error, attempted to set direction to NaN (" + newDirection + ")");
 			return this;
 		}
-		rotateAroundAxis(direction.getCrossProduct(newDirection).normalize(), direction.angle(newDirection));
+		Vector crossProduct = direction.getCrossProduct(newDirection);
+		crossProduct.normalize();
+		try {
+			crossProduct.checkFinite();
+		}catch (Exception e) {
+			OMCLogger.debug("Error, the cross product from old direction " + direction + " and the new direction " + newDirection + " is NaN (delta is" + newDirection.clone().subtract(direction) + ")");
+			return this;
+		}
+		rotateAroundAxis(crossProduct, direction.angle(newDirection));
 		direction = newDirection.clone();
 		return this;
 	}

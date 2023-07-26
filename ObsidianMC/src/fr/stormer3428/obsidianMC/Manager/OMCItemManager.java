@@ -18,7 +18,9 @@ import fr.stormer3428.obsidianMC.Util.OMCLogger;
 public abstract class OMCItemManager extends ConfigHolder implements Listener{
 
 	private final ArrayList<OMCItem> registeredItems = new ArrayList<>();
-		
+
+	protected abstract void registerItems();
+	
 	public OMCItemManager(String configName) {
 		super(new File(OMCPlugin.i.getDataFolder(), configName));
 	}
@@ -27,8 +29,9 @@ public abstract class OMCItemManager extends ConfigHolder implements Listener{
 	public void onPluginEnable() {
 		super.onPluginEnable();
 		OMCPlugin.i.getServer().getPluginManager().registerEvents(this, OMCPlugin.i);
+		registerItems();
 	}
-	
+
 	/**
 	 * Creates a {@link OMCVariable} with the given signature that completes for registered {@link OMCItem}
 	 * 
