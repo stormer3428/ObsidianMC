@@ -5,9 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import fr.stormer3428.obsidianMC.OMCPlugin;
 
 public abstract class UnsetDurationPower extends OMCPower{
 	
@@ -22,7 +19,7 @@ public abstract class UnsetDurationPower extends OMCPower{
 	@Override
 	public boolean tryCast(ItemStack it, Player p) {
 		if(!isEnabled()) return false;
-		if(onCooldown.contains(p.getUniqueId()) || empowered.contains(p.getUniqueId()) || !meetsConditions(it, p)) return false;
+		if(isOnCooldown(p) || empowered.contains(p.getUniqueId()) || !meetsConditions(it, p)) return false;
 		empower(it, p);
 		return true;
 	}
@@ -37,16 +34,8 @@ public abstract class UnsetDurationPower extends OMCPower{
 	
 	protected void putOnCooldown(Player p, int abilityCooldown) {
 		empowered.remove(p.getUniqueId());
-		onCooldown.add(p.getUniqueId());
 		onDepower(p);
-		new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				onCooldown.remove(p.getUniqueId());
-				onCooldownEnd(p);
-			}
-		}.runTaskLater(OMCPlugin.i, abilityCooldown);
+		super.putOnCooldown(p, abilityCooldown);
 	}
 	
 
