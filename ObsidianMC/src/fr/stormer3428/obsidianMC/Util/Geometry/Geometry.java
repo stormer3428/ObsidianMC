@@ -8,15 +8,14 @@ import org.bukkit.Particle;
 import org.bukkit.util.Vector;
 
 import fr.stormer3428.obsidianMC.Util.OMCLogger;
+import fr.stormer3428.obsidianMC.Util.OMCUtil;
 
 public class Geometry {
 
 	ArrayList<Drawable> drawables = new ArrayList<>();
-	private Vector direction;
-	
-	public Geometry(Vector direction) {
-		this.direction = direction;
-	}
+	private Vector direction = OMCUtil.VERTICAL.clone();
+
+	public Geometry() {}
 	
 	public Geometry add(Drawable ... drawables) {
 		this.drawables.addAll(Arrays.asList(drawables));

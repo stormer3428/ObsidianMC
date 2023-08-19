@@ -33,11 +33,14 @@ public abstract class OMCPowerManager extends ConfigHolder implements Listener{
 		super.onPluginReload();
 		for(OMCPower power : registeredPowers) power.onPluginReload();
 	}
+
+	public abstract void registerPowers();
 	
 	@Override
 	public void onPluginEnable() {
 		super.onPluginEnable();
 		OMCPlugin.i.getServer().getPluginManager().registerEvents(this, OMCPlugin.i);
+		registerPowers();
 		for(OMCPower power : registeredPowers) power.onPluginEnable();
 		new BukkitRunnable() {
 			int ticker = 0;
@@ -51,6 +54,7 @@ public abstract class OMCPowerManager extends ConfigHolder implements Listener{
 		}.runTaskTimer(OMCPlugin.i, 0, 1);	
 	}
 	
+
 	/**
 	 * Creates a {@link OMCVariable} with the given signature that completes for registered {@link OMCPower}
 	 * 
@@ -75,6 +79,19 @@ public abstract class OMCPowerManager extends ConfigHolder implements Listener{
 				return list;
 			}
 		};
+	}
+	
+	/**
+	 * Creates a {@link OMCVariable} with the default signature "%POWER%" that completes for registered {@link OMCPower}
+	 * 
+	 * @param variableSignature
+	 * the signature of the variable
+	 * @return the variable
+	 * @see OMCCommand
+	 * @see #registerPower(OMCPower)
+	 */
+	public OMCVariable getPowerVariable() {
+		return getPowerVariable("%POWER%");
 	}
 
 	/**

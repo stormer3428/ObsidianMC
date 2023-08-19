@@ -108,6 +108,7 @@ public class ConfigHolder implements PluginTied{
 	}
 
 	public void createConfigFile(boolean force) {
+		OMCLogger.systemNormal("creating config file " + resourcePath);
 		File dataFolder = OMCPlugin.i.getDataFolder();
 
 		InputStream in = OMCPlugin.i.getResource(resourcePath);
@@ -116,12 +117,12 @@ public class ConfigHolder implements PluginTied{
 		//        }
 
 		File outFile = new File(dataFolder, resourcePath);
-		if(!outFile.exists())
-			try {
-				outFile.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		//		if(!outFile.exists()) try {
+		//			outFile.createNewFile();
+		//			OMCLogger.systemNormal("empty file created " + resourcePath);
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
 		int lastIndex = resourcePath.lastIndexOf('/');
 		File outDir = new File(dataFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
 
@@ -130,8 +131,8 @@ public class ConfigHolder implements PluginTied{
 		}
 
 		if(in != null) try {
-
 			if (!outFile.exists() || force) {
+				OMCLogger.systemNormal("streaming data from jar");
 				OutputStream out = new FileOutputStream(outFile);
 				byte[] buf = new byte[1024];
 				int len;
@@ -145,6 +146,10 @@ public class ConfigHolder implements PluginTied{
 			}
 		} catch (IOException ex) {
 			OMCLogger.systemError("Could not save " + outFile.getName() + " to " + outFile);
+		} else if(!outFile.exists()) try {
+			outDir.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

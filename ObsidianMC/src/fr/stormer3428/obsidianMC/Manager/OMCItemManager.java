@@ -57,6 +57,19 @@ public abstract class OMCItemManager extends ConfigHolder implements Listener{
 			}
 		};
 	}
+	
+	/**
+	 * Creates a {@link OMCVariable} with the default signature "%ITEM%" that completes for registered {@link OMCItem}
+	 * 
+	 * @param variableSignature
+	 * the signature of the variable
+	 * @return the variable
+	 * @see OMCCommand
+	 * @see #registerItem(OMCItem)
+	 */
+	public OMCVariable getItemVariable() {
+		return getItemVariable("%ITEM%");
+	}
 
 	/**
 	 * 

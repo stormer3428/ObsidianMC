@@ -38,7 +38,7 @@ public abstract class OMCCommandManager implements CommandExecutor, TabCompleter
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		for(OMCCommand command : this.COMMANDS) if(command.matches(cmd.getName(), args)) return command.execute(sender, args);
 		StringBuilder architecture = new StringBuilder(cmd.getName());
-		for(String arg : args) architecture.append(arg);
+		for(String arg : args) architecture.append("." + arg);
 		return OMCLogger.error(sender, OMCLang.COMMAND_SYNTAX_ERROR.toString().replace("<%SYNTAX>", architecture.toString().trim()));
 	}
 

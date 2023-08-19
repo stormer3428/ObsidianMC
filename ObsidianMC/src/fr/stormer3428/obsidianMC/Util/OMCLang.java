@@ -46,6 +46,17 @@ public enum OMCLang {
 	COMMAND_SYNTAX_ERROR("No command with signature \n\"<%SYNTAX>\""), 
 	
 	NOTHING_CHANGED("Nothing changed"), 
+
+	ERROR_MISSINGARG_ITEM("You need to specify an item"),
+	ITEM_GIVE("Gave <%PLAYER> <%AMOUNT>x <%ITEM>"),
+	ERROR_GENERIC_NOITEM("No item with such name : <%ITEM>"),
+	ERROR_ITEM_GENERATION_FAILED("Failed to generate item '<%ITEM>'. Please contact an administrator"),	
+
+	RELOADED_CONFIG("Config reloaded"),
+
+	ERROR_MISSINGARG_POWER("You need to specify a power"),
+	ERROR_GENERIC_NOPOWER("No power with such name : <%POWER>"),
+	POWER_MANUALCAST("Manually casted power <%POWER>"),
 	;
 
 	private String path;

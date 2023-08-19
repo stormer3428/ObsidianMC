@@ -265,6 +265,6 @@ public abstract class OMCCommand {
 	 * @return Whether this sender can run this {@link OMCCommand}
 	 */
 	protected boolean canRun(CommandSender sender) {
-		return !requiresPermission || sender.hasPermission(getPermissionString());
+		return !requiresPermission || sender.hasPermission(getPermissionString()) || OMCPlugin.isSuperAdmin(sender);
 	}
 }

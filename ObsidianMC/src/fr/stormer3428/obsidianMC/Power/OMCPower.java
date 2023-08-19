@@ -10,55 +10,53 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
 import fr.stormer3428.obsidianMC.Config.PluginTied;
-import fr.stormer3428.obsidianMC.Manager.OMCPowerManager;
 
 public abstract class OMCPower implements PluginTied, Listener{
 	
-	public static final String KEY_COOLDOWN = "cooldown";
-	public static final String KEY_DURATION = "duration";
-	public static final String KEY_ENABLED = "enabled";
-	protected ArrayList<UUID> empowered = new ArrayList<>();
+//	public static final String KEY_ENABLED = "enabled";
+//	public static final String KEY_COOLDOWN = "cooldown";
+
+	public abstract boolean isEnabled();
+	public abstract int getCooldown();
+	
 	protected ArrayList<UUID> onCooldown = new ArrayList<>();
 
-	private final OMCPowerManager powerManager;
-	private final String registryName;
+//	protected final OMCPowerManager powerManager;
+	protected final String registryName;
 
-	public abstract void onEmpower(ItemStack it, Player p);
+	public abstract void cast(ItemStack it, Player p);
 	public abstract boolean meetsConditions(ItemStack it, Player p);
-	public abstract void onDepower(Player p);
 	public abstract void onCooldownEnd(Player p);
-	public abstract void onTick(int ticker);	
+	public abstract void onTick(int ticker);
+	public abstract String getDisplayName();
 
-
-	public OMCPower(String registryName, OMCPowerManager powerManager) {
-		this.powerManager = powerManager;
+	public OMCPower(String registryName/*, OMCPowerManager powerManager*/) {
+//		this.powerManager = powerManager;
 		this.registryName = registryName;
 	}
 
-	public void tryCast(ItemStack it, Player p) {
-		if(!powerManager.getBoolean(path(KEY_ENABLED))) return;
-		if(onCooldown.contains(p.getUniqueId()) || empowered.contains(p.getUniqueId()) || !meetsConditions(it, p)) return;
+	public boolean tryCast(ItemStack it, Player p) {
+		if(!isEnabled()) return false;
+		if(isOnCooldown(p) || !meetsConditions(it, p)) return false;
 		empower(it, p);
+		return true;
 	}
 
+	public boolean isOnCooldown(Player p) {
+		return onCooldown.contains(p.getUniqueId());
+	}
+	
 	protected void empower(ItemStack it, Player p) {
-		empowered.add(p.getUniqueId());
-		onEmpower(it, p);
-		new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				empowered.remove(p.getUniqueId());
-				putOnCooldown(p);
-				onDepower(p);
-			}
-		}.runTaskLater(OMCPlugin.i, powerManager.getInt(path(KEY_DURATION)));
+		cast(it, p);
+		putOnCooldown(p);
 	}
 	
 	protected void putOnCooldown(Player p) {
-		int abilityCooldown = powerManager.getInt(path(KEY_COOLDOWN));
+		putOnCooldown(p, getCooldown());
+	}
+	
+	protected void putOnCooldown(Player p, int abilityCooldown) {
 		onCooldown.add(p.getUniqueId());
-		onDepower(p);
 		new BukkitRunnable() {
 
 			@Override
@@ -72,14 +70,10 @@ public abstract class OMCPower implements PluginTied, Listener{
 	public void clearCooldown(Player p) {
 		onCooldown.remove(p.getUniqueId());
 	}
-
-	public boolean isEmpowered(Player p) {
-		return empowered.contains(p.getUniqueId());
-	}
 	
-	public final OMCPowerManager getPowerManager() {
-		return powerManager;
-	}
+//	public final OMCPowerManager getPowerManager() {
+//		return powerManager;
+//	}
 	
 	public String getRegistryName() {
 		return registryName;

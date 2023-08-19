@@ -1,7 +1,10 @@
 package fr.stormer3428.obsidianMC.Config;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -25,18 +28,13 @@ public class AutoconfigParser {
 			}
 
 			String configName = autoConfig.config();
+
 			File file = new File(OMCPlugin.i.getDataFolder(), configName);
 			if(!file.exists()) {
-				OMCLogger.systemNormal("could not find file, creating...");
+				OMCLogger.systemNormal("could not find file \"" + configName + "\", creating...");
 				file.getParentFile().mkdirs();
-				try {
-					file.createNewFile();
-					OMCLogger.systemNormal("Success!");
-				} catch (IOException e) {
-					e.printStackTrace();
-					OMCLogger.systemError("failed...");
-					continue;
-				}
+				createConfigFile(configName);
+				OMCLogger.systemNormal("Success!");
 			}
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 			for(Field field : clazz.getDeclaredFields()) {
@@ -47,7 +45,7 @@ public class AutoconfigParser {
 				DoubleConfigValue doubleConfigValue = field.getAnnotation(DoubleConfigValue.class);
 				BooleanConfigValue booleanConfigValue = field.getAnnotation(BooleanConfigValue.class);
 				if(stringConfigValue != null) {
-					OMCLogger.systemNormal("Updating field " + field.getName());
+					OMCLogger.debug("Updating field " + field.getName());
 					String defaultValue = stringConfigValue.defaultValue();
 					String path = stringConfigValue.path();
 					if(!config.contains(path)) config.set(path, defaultValue);
@@ -62,7 +60,7 @@ public class AutoconfigParser {
 						continue;
 					}
 				}else if(intConfigValue != null) {
-					OMCLogger.systemNormal("Updating field " + field.getName());
+					OMCLogger.debug("Updating field " + field.getName());
 					int defaultValue = intConfigValue.defaultValue();
 					String path = intConfigValue.path();
 					if(!config.contains(path)) config.set(path, defaultValue);
@@ -77,7 +75,7 @@ public class AutoconfigParser {
 						continue;
 					}
 				}else if(doubleConfigValue != null) {
-					OMCLogger.systemNormal("Updating field " + field.getName());
+					OMCLogger.debug("Updating field " + field.getName());
 					double defaultValue = doubleConfigValue.defaultValue();
 					String path = doubleConfigValue.path();
 					if(!config.contains(path)) config.set(path, defaultValue);
@@ -92,7 +90,7 @@ public class AutoconfigParser {
 						continue;
 					}
 				}else if(booleanConfigValue != null) {
-					OMCLogger.systemNormal("Updating field " + field.getName());
+					OMCLogger.debug("Updating field " + field.getName());
 					boolean defaultValue = booleanConfigValue.defaultValue();
 					String path = booleanConfigValue.path();
 					if(!config.contains(path)) config.set(path, defaultValue);
@@ -123,6 +121,46 @@ public class AutoconfigParser {
 		annotatedClasses.add(clazz);
 	}
 
+	public void createConfigFile(String resourcePath) {
+		File dataFolder = OMCPlugin.i.getDataFolder();
+
+		InputStream in = OMCPlugin.i.getResource(resourcePath);
+		if (in == null) {
+			try {
+				new File(dataFolder, resourcePath).createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+
+		File outFile = new File(dataFolder, resourcePath);
+		if(!outFile.exists())
+			try {
+				outFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		int lastIndex = resourcePath.lastIndexOf('/');
+		File outDir = new File(dataFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+
+		if (!outDir.exists()) {
+			outDir.mkdirs();
+		}
+
+		if(in != null) try {
+			OutputStream out = new FileOutputStream(outFile);
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			out.close();
+			in.close();
+		} catch (IOException ex) {
+			OMCLogger.systemError("Could not save " + outFile.getName() + " to " + outFile);
+		}
+	}
 
 
 }
