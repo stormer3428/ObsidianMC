@@ -4,14 +4,17 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
@@ -167,6 +170,15 @@ public class OMCUtil {
 	
 	public static final Vector VERTICAL = new Vector(0,1,0);
 
+	public static boolean isLookingAtEntity(LivingEntity looker, Entity target) {
+		Location startLocation = looker.getEyeLocation();
+		Vector direction = startLocation.getDirection();
+		double maxDistance = startLocation.distance(target.getLocation()) + 1; //add 1 in case looking from bottom
+		
+		RayTraceResult rtr = startLocation.getWorld().rayTrace(startLocation, direction, maxDistance, FluidCollisionMode.NEVER, true, 0.0, (t) -> t.equals(target));
+		return rtr != null;
+	}
+	
 	public static Vector validateVector(Vector v) {
 		if(v.getX() == 0) v.setX(Float.MIN_VALUE);
 		if(v.getY() == 0) v.setY(Float.MIN_VALUE);

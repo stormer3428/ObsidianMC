@@ -11,6 +11,7 @@ public abstract class UnsetDurationPower extends OMCPower{
 	protected ArrayList<UUID> empowered = new ArrayList<>();
 
 	public abstract void onDepower(Player p);
+	public abstract boolean onEmpoweredTryCast(ItemStack it, Player p);
 
 	public UnsetDurationPower(String registryName/*, OMCPowerManager powerManager*/) {
 		super(registryName/*, powerManager*/);
@@ -19,11 +20,13 @@ public abstract class UnsetDurationPower extends OMCPower{
 	@Override
 	public boolean tryCast(ItemStack it, Player p) {
 		if(!isEnabled()) return false;
-		if(isOnCooldown(p) || empowered.contains(p.getUniqueId()) || !meetsConditions(it, p)) return false;
+		if(isOnCooldown(p) || !meetsConditions(it, p)) return false;
+		if(empowered.contains(p.getUniqueId())) return onEmpoweredTryCast(it, p);
 		empower(it, p);
 		return true;
 	}
 	
+
 	/*
 	 * It is expected to call "putOnCooldown when ability ends"
 	 */
