@@ -162,6 +162,15 @@ public class Line implements Drawable{
 		this.forceRender = forceRender;
 		return this;
 	}
+	
+	public Line setResolution(double resolution) {
+		this.resolution = resolution;
+		return this;
+	}
+	
+	public double getResolution() {
+		return resolution;
+	}
 
 	@Override
 	public boolean isForceRendering() {
