@@ -1,8 +1,8 @@
 package fr.stormer3428.obsidianMC.Power;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
 
@@ -14,15 +14,10 @@ public abstract class SetDurationPower extends UnsetDurationPower{
 		super(registryName/*, powerManager*/);
 	}
 	
-	protected void empower(ItemStack it, Player p) {
+	protected boolean empower(ItemStack it, Player p) {
+		if(!cast(it, p)) return false;
 		empowered.add(p.getUniqueId());
-		cast(it, p);
-		new BukkitRunnable() {
-
-			@Override
-			public void run() {
-				putOnCooldown(p);
-			}
-		}.runTaskLater(OMCPlugin.i, getDuration());
+		Bukkit.getScheduler().scheduleSyncDelayedTask(OMCPlugin.i, () -> putOnCooldown(p), getDuration());
+		return true;
 	}
 }

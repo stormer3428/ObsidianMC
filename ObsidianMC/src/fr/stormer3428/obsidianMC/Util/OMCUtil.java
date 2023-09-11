@@ -164,6 +164,10 @@ public class OMCUtil {
 		}
 	}
 	
+	public static Vector lerp(Vector a, Vector b, double i) {
+		return a.multiply(1 - i).add(b.multiply(i));
+	}
+	
 	public static void spawnMovingParticle(Particle particle, Location loc, Vector dir, double speed) {
 		loc.getWorld().spawnParticle(particle, loc, 0, dir.getX(), dir.getY(), dir.getZ(), speed, null, true);
 	}

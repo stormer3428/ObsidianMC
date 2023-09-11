@@ -23,8 +23,7 @@ public abstract class OMCPower implements PluginTied, Listener{
 
 	protected final String registryName;
 
-	public abstract void cast(ItemStack it, Player p);
-	public abstract boolean meetsConditions(ItemStack it, Player p);
+	public abstract boolean cast(ItemStack it, Player p);
 	public abstract void onCooldownEnd(Player p);
 	public abstract void onTick(int ticker);
 	public abstract String getDisplayName();
@@ -32,7 +31,7 @@ public abstract class OMCPower implements PluginTied, Listener{
 	@Override
 	public void onPluginEnable() {
 		new BukkitRunnable() {
-			
+
 			@Override
 			public void run() {
 				Iterator<Entry<UUID, Integer>> iterator = onCooldown.entrySet().iterator();
@@ -53,14 +52,14 @@ public abstract class OMCPower implements PluginTied, Listener{
 			}
 		}.runTaskTimer(OMCPlugin.i, 0, 1);
 	}
-	
+
 	public OMCPower(String registryName) {
 		this.registryName = registryName;
 	}
 
 	public boolean tryCast(ItemStack it, Player p) {
 		if(!isEnabled()) return false;
-		if(isOnCooldown(p) || !meetsConditions(it, p)) return false;
+		if(isOnCooldown(p)) return false;
 		empower(it, p);
 		return true;
 	}
@@ -68,14 +67,15 @@ public abstract class OMCPower implements PluginTied, Listener{
 	public boolean isOnCooldown(Player p) {
 		return isOnCooldown(p.getUniqueId());
 	}
-	
+
 	public boolean isOnCooldown(UUID uuid) {
 		return onCooldown.containsKey(uuid);
 	}
 
-	protected void empower(ItemStack it, Player p) {
-		cast(it, p);
+	protected boolean empower(ItemStack it, Player p) {
+		if(!cast(it, p)) return false;
 		putOnCooldown(p);
+		return true;
 	}
 
 	protected void putOnCooldown(Player p) {

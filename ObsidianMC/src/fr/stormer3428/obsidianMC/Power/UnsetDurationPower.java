@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class UnsetDurationPower extends OMCPower{
-	
+
 	protected ArrayList<UUID> empowered = new ArrayList<>();
 
 	public abstract void onDepower(Player p);
@@ -16,31 +16,32 @@ public abstract class UnsetDurationPower extends OMCPower{
 	public UnsetDurationPower(String registryName/*, OMCPowerManager powerManager*/) {
 		super(registryName/*, powerManager*/);
 	}
-	
+
 	@Override
 	public boolean tryCast(ItemStack it, Player p) {
 		if(!isEnabled()) return false;
-		if(isOnCooldown(p) || !meetsConditions(it, p)) return false;
+		if(isOnCooldown(p)) return false;
 		if(empowered.contains(p.getUniqueId())) return onEmpoweredTryCast(it, p);
 		empower(it, p);
 		return true;
 	}
-	
+
 
 	/*
 	 * It is expected to call "putOnCooldown when ability ends"
 	 */
-	protected void empower(ItemStack it, Player p) {
+	protected boolean empower(ItemStack it, Player p) {
+		if(!cast(it, p)) return false;
 		empowered.add(p.getUniqueId());
-		cast(it, p);
+		return true;
 	}
-	
+
 	protected void putOnCooldown(Player p, int abilityCooldown) {
 		empowered.remove(p.getUniqueId());
 		onDepower(p);
 		super.putOnCooldown(p, abilityCooldown);
 	}
-	
+
 
 	public boolean isEmpowered(Player p) {
 		return empowered.contains(p.getUniqueId());
