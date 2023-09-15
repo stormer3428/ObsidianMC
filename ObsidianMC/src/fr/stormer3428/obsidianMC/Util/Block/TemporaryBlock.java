@@ -1,6 +1,9 @@
 package fr.stormer3428.obsidianMC.Util.Block;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,20 +22,22 @@ public class TemporaryBlock {
 	private BlockData blockData;
 	private int remainingTicks;
 	private Location location;
+	private List<UUID> playerWhitelist;
 
-	private TemporaryBlock(BlockData blockData, int visibleTime, Location loc) {
+	private TemporaryBlock(BlockData blockData, int visibleTime, Location loc, UUID ... playerWhitelist) {
 		this.location = loc;
 		this.remainingTicks = visibleTime;
+		this.playerWhitelist = Arrays.asList(playerWhitelist);
 		setBlockData(blockData);
 		all.add(this);
 		startLoop();
 	}
 
-	public static TemporaryBlock createNew(Material material, int visibleTime, Location loc) {
-		return createNew(material.createBlockData(), visibleTime, loc);
+	public static TemporaryBlock createNew(Material material, int visibleTime, Location loc, UUID ...  playerWhitelist) {
+		return createNew(material.createBlockData(), visibleTime, loc, playerWhitelist);
 	}
 	
-	public static TemporaryBlock createNew(BlockData blockData, int visibleTime, Location loc) {
+	public static TemporaryBlock createNew(BlockData blockData, int visibleTime, Location loc, UUID ... playerWhitelist) {
 		for(TemporaryBlock block : all) if(block.location.equals(loc)) {
 			block.setRemainingTicks(visibleTime);
 			block.setBlockData(blockData);
@@ -47,7 +52,7 @@ public class TemporaryBlock {
 			@Override
 			public void run() {
 				if(TemporaryBlock.this.remainingTicks <= 0) {
-					for(Player p : Bukkit.getOnlinePlayers()) p.sendBlockChange(TemporaryBlock.this.location, TemporaryBlock.this.location.getBlock().getBlockData());
+					for(Player p : Bukkit.getOnlinePlayers()) if(playerWhitelist.isEmpty() || playerWhitelist.contains(p.getUniqueId())) p.sendBlockChange(TemporaryBlock.this.location, TemporaryBlock.this.location.getBlock().getBlockData());
 					all.remove(TemporaryBlock.this.instance);
 					cancel();
 				}
@@ -70,7 +75,19 @@ public class TemporaryBlock {
 
 	public void setBlockData(BlockData blockData) {
 		this.blockData = blockData;
-		for(Player p : Bukkit.getOnlinePlayers()) p.sendBlockChange(this.location, blockData);
+		for(Player p : Bukkit.getOnlinePlayers()) if(playerWhitelist.isEmpty() || playerWhitelist.contains(p.getUniqueId())) p.sendBlockChange(this.location, blockData);
+	}
+
+	public List<UUID> getPlayerWhitelist() {
+		return playerWhitelist;
+	}
+
+	public void setPlayerWhitelist(UUID[] playerWhitelist) {
+		this.playerWhitelist = Arrays.asList(playerWhitelist);
+	}
+	
+	public void setPlayerWhitelist(List<UUID> playerWhitelist) {
+		this.playerWhitelist = playerWhitelist;
 	}
 
 }
