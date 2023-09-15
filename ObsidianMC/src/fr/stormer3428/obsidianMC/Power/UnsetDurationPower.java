@@ -3,6 +3,7 @@ package fr.stormer3428.obsidianMC.Power;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,10 +37,11 @@ public abstract class UnsetDurationPower extends OMCPower{
 		return true;
 	}
 
-	protected void putOnCooldown(Player p, int abilityCooldown) {
-		empowered.remove(p.getUniqueId());
-		onDepower(p);
-		super.putOnCooldown(p, abilityCooldown);
+	protected void putOnCooldown(UUID uuid, int abilityCooldown) {
+		empowered.remove(uuid);
+		Player p = Bukkit.getPlayer(uuid);
+		if(p != null) onDepower(p);
+		super.putOnCooldown(uuid, abilityCooldown);
 	}
 
 

@@ -83,7 +83,15 @@ public abstract class OMCPower implements PluginTied, Listener{
 	}
 
 	protected void putOnCooldown(Player p, int abilityCooldown) {
-		onCooldown.put(p.getUniqueId(), Math.max(getCooldown(p), abilityCooldown));
+		putOnCooldown(p.getUniqueId(), abilityCooldown);
+	}
+
+	protected void putOnCooldown(UUID uuid) {
+		putOnCooldown(uuid, getCooldown());
+	}
+
+	protected void putOnCooldown(UUID uuid, int abilityCooldown) {
+		onCooldown.put(uuid, Math.max(getCooldown(uuid), abilityCooldown));
 	}
 
 	public void clearCooldown(Player p) {
@@ -91,8 +99,12 @@ public abstract class OMCPower implements PluginTied, Listener{
 	}
 
 	public int getCooldown(Player p) {
-		if(!isOnCooldown(p)) return 0;
-		return onCooldown.get(p.getUniqueId());
+		return getCooldown(p.getUniqueId());
+	}
+
+	public int getCooldown(UUID uuid) {
+		if(!isOnCooldown(uuid)) return 0;
+		return onCooldown.get(uuid);
 	}
 
 	public String getRegistryName() {
