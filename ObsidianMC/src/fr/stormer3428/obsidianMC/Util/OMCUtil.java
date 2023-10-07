@@ -7,12 +7,18 @@ import java.util.regex.Pattern;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.SmithingRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Transformation;
@@ -24,6 +30,14 @@ import net.md_5.bungee.api.ChatColor;
 
 public class OMCUtil {
 
+	public static NamespacedKey getNameSpacedKeyFromRecipe(Recipe recipe) {
+		if(recipe instanceof ShapedRecipe keyHolder) return keyHolder.getKey();
+		if(recipe instanceof ShapelessRecipe keyHolder) return keyHolder.getKey();
+		if(recipe instanceof SmithingRecipe keyHolder) return keyHolder.getKey();
+		if(recipe instanceof FurnaceRecipe keyHolder) return keyHolder.getKey();
+		return null;
+	}
+	
 	public static Transformation getCenteredBlockTransformation() {
 		return new Transformation(new Vector3f(-.5f,-.5f,-.5f), new AxisAngle4f(), new Vector3f(1,1,1), new AxisAngle4f());
 	}

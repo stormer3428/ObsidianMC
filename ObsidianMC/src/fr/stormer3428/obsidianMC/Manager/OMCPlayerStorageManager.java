@@ -20,13 +20,13 @@ public class OMCPlayerStorageManager extends ConfigHolder{
 	
 	public <T> void set(UUID uuid, OMCDataType<T> type, T value) {
 		String path = uuid.toString() + "." + type.getKey();
-		getConfig().set(path, type.toString(value));
+		type.save(getConfig(), path, value);
 		saveConfig();
 	}
 	
 	public <T> T get(UUID uuid, OMCDataType<T> type) {
 		String path = uuid.toString() + "." + type.getKey();
 		if(!getConfig().contains(path)) set(uuid, type, type.defaultVal());
-		return type.fromString(getString(path));
+		return type.get(getConfig(), path);
 	}
 }

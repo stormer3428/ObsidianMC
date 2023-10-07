@@ -83,7 +83,7 @@ public class OMCPremadeCommandFactory {
 
 	public static OMCCommand[] getReloadCommands(String root) {
 		return new OMCCommand[] {
-				new OMCCommand("questsmp%%%qsmp reload", true) {
+				new OMCCommand(root + " reload", true) {
 
 					@Override
 					public boolean execute(CommandSender sender, ArrayList<String> args) {

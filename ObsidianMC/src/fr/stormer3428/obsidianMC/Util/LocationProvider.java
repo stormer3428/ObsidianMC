@@ -17,7 +17,7 @@ public class LocationProvider {
 	}
 
 	public Location getLocation() {
-		return location == null ? entity.getLocation() : location;
+		return location == null ? entity.getLocation() : location.clone();
 	}
 
 	public void setLocation(Entity entity) {
