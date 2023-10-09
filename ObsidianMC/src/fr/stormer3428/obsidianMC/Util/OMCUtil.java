@@ -1,5 +1,6 @@
 package fr.stormer3428.obsidianMC.Util;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -40,6 +42,60 @@ public class OMCUtil {
 	
 	public static Transformation getCenteredBlockTransformation() {
 		return new Transformation(new Vector3f(-.5f,-.5f,-.5f), new AxisAngle4f(), new Vector3f(1,1,1), new AxisAngle4f());
+	}
+	
+	public static final ArrayList<Material> SEE_THROUGH = new ArrayList<Material>();
+
+	static {
+		for(Material material : Material.values()) {
+			if(material.isOccluding()) continue;
+			SEE_THROUGH.add(material);
+		}
+	}
+	
+	public static boolean canSee(LivingEntity looker, LivingEntity target, double range) {
+		if(!looker.getWorld().equals(target.getWorld())) return false;
+		double rangeSq = range * range;
+		if(looker.getLocation().distanceSquared(target.getLocation()) > rangeSq) return false;
+		World w = looker.getWorld();
+
+		if(true) {
+			Location source = looker.getEyeLocation();
+			Location targetLoc = target.getLocation();
+			Vector toTarget = targetLoc.toVector().subtract(source.toVector()).normalize();
+			double distanceLeft = range;
+			
+			while(distanceLeft > 0) {
+				RayTraceResult rtr = w.rayTrace(source, toTarget, distanceLeft, FluidCollisionMode.NEVER, true, 0, (e) -> e.equals(target));
+				if(rtr == null) break;
+				if(rtr.getHitBlock() != null) {
+					if(!SEE_THROUGH.contains(rtr.getHitBlock().getType())) break;
+					distanceLeft -= rtr.getHitPosition().toLocation(w).distance(source);
+					source = rtr.getHitPosition().toLocation(w).add(toTarget.clone().multiply(0.1));
+					continue;
+				}
+				return true;
+			}
+		}
+		if(true) {
+			Location source = looker.getEyeLocation();
+			Location targetLoc = target.getLocation().add(0, target.getHeight(), 0);
+			Vector toTarget = targetLoc.toVector().subtract(source.toVector()).normalize();
+			double distanceLeft = range;
+			
+			while(distanceLeft > 0) {
+				RayTraceResult rtr = w.rayTrace(source, toTarget, distanceLeft, FluidCollisionMode.NEVER, true, 0, (e) -> e.equals(target));
+				if(rtr == null) break;
+				if(rtr.getHitBlock() != null) {
+					if(!SEE_THROUGH.contains(rtr.getHitBlock().getType())) break;
+					distanceLeft -= rtr.getHitPosition().toLocation(w).distance(source);
+					source = rtr.getHitPosition().toLocation(w).add(toTarget.clone().multiply(0.1));
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static float noteBlockToPitch(int note) {
