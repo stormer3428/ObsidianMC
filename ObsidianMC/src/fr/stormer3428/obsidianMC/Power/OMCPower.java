@@ -78,7 +78,7 @@ public abstract class OMCPower implements PluginTied, Listener{
 		return true;
 	}
 
-	protected void putOnCooldown(Player p) {
+	public void putOnCooldown(Player p) {
 		putOnCooldown(p, getCooldown());
 	}
 
