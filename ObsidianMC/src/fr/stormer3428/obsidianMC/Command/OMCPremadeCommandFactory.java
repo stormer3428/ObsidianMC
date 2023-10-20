@@ -3,7 +3,11 @@ package fr.stormer3428.obsidianMC.Command;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -129,5 +133,54 @@ public class OMCPremadeCommandFactory {
 				}
 		};
 	}
+	
+
+	public static OMCCommand[] getDebugCommands(String root) {
+		return new OMCCommand[] {
+				new OMCCommand(root + " debug%%%d resetplayer %P%", true) {
+
+					@Override
+					public boolean execute(CommandSender sender, ArrayList<String> args) {
+						Player p = Bukkit.getPlayer(args.get(1));
+						if(p == null) return OMCLogger.error(sender, OMCLang.ERROR_INVALIDARG_NOPLAYER.toString().replace("<%PLAYER>", args.get(0)));
+
+						try {
+							for(Attribute attribute : Attribute.values()) {
+								AttributeInstance att = p.getAttribute(attribute);
+								if(att == null) continue;
+								for(AttributeModifier modifier : att.getModifiers()) {
+									att.removeModifier(modifier);
+								}
+							}
+						}catch (Exception e) {
+							OMCLogger.error(sender, e.toString());
+							for(StackTraceElement element : e.getStackTrace()) {
+								OMCLogger.error(sender, element.toString());
+							}
+						}
+
+						return OMCLogger.normal(sender, OMCLang.RELOADED_CONFIG.toString());
+					}
+				}
+				,
+				new OMCCommand(root + " debug%%%d viewstringblob%%%viewblob%%%vb", true) {
+
+					@Override
+					public boolean execute(CommandSender sender, ArrayList<String> vars) {
+						if(!(sender instanceof Player p)) return OMCLogger.error(sender, OMCLang.ERROR_PLAYERONLY.toString());
+						final ItemStack it = p.getInventory().getItemInMainHand();
+						YamlConfiguration config = new YamlConfiguration();
+						config.set("stringBlob", it);
+						return OMCLogger.normal(p, config.saveToString());
+					}
+				}
+		};
+	}
+	
+	
+	
+
+
+
 
 }
