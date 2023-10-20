@@ -13,7 +13,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import fr.stormer3428.obsidianMC.Util.OMCUtil;
+import fr.stormer3428.obsidianMC.Util.Geometry.ParticleUtils;
 
 public class LightningStrike {
 
@@ -50,10 +50,10 @@ public class LightningStrike {
 
 		Vector previousPoint = a.toVector();
 		for(Vector breakPoint : breakPoints) {
-			OMCUtil.drawParticleLine(previousPoint.toLocation(world), breakPoint.toLocation(world), particle, 0.1, 1, new Vector(), 0.0, options);
+			ParticleUtils.drawParticleLine(previousPoint.toLocation(world), breakPoint.toLocation(world), particle, 0.1, 1, new Vector(), 0.0, options);
 			previousPoint = breakPoint;
 		}
-		OMCUtil.drawParticleLine(previousPoint.toLocation(world), b, particle, 0.1, 1, new Vector(), 0.0, options);
+		ParticleUtils.drawParticleLine(previousPoint.toLocation(world), b, particle, 0.1, 1, new Vector(), 0.0, options);
 		b.getWorld().spawnParticle(Particle.FLASH, b, 1, 0, 0, 0, 0, null, true);
 		
 		if(hitConsumer != null) {

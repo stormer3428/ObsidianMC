@@ -29,7 +29,7 @@ import fr.stormer3428.obsidianMC.Item.OMCItem;
 import fr.stormer3428.obsidianMC.Item.SMPPowerItem;
 import fr.stormer3428.obsidianMC.Power.OMCPassivePower;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCUtil;
+import fr.stormer3428.obsidianMC.Util.itemStackUtils;
 
 public abstract class OMCItemManager extends ConfigHolder implements Listener{
 
@@ -72,7 +72,7 @@ public abstract class OMCItemManager extends ConfigHolder implements Listener{
 
 	public void registerRecipes() {
 		for(OMCItem item : registeredItems) for(Recipe recipe : item.getRecipes()){
-			Bukkit.removeRecipe(OMCUtil.getNameSpacedKeyFromRecipe(recipe));
+			Bukkit.removeRecipe(itemStackUtils.getNameSpacedKeyFromRecipe(recipe));
 			Bukkit.addRecipe(recipe);
 		}		
 	}

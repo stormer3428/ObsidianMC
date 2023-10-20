@@ -3,7 +3,7 @@ package fr.stormer3428.obsidianMC.PotionEffects;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.LivingEntity;
 
-import fr.stormer3428.obsidianMC.Util.OMCUtil;
+import fr.stormer3428.obsidianMC.Util.EntityUtils;
 
 public enum OMCPotionEffectCondition{
 	ALWAYS{
@@ -18,7 +18,7 @@ public enum OMCPotionEffectCondition{
 
 		@Override
 		public boolean shouldApply(LivingEntity e) {
-			return e.isInWater() || OMCUtil.isUnderRain(e);
+			return e.isInWater() || EntityUtils.isUnderRain(e);
 		}
 		
 	},
