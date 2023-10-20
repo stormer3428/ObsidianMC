@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 
 public class AutoconfigParser {
 

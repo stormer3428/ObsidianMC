@@ -1,146 +1,30 @@
 package fr.stormer3428.obsidianMC.Util;
 
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.bukkit.FluidCollisionMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
-import org.bukkit.World;
-import org.bukkit.block.data.Waterlogged;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.SmithingRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.RayTraceResult;
-import org.bukkit.util.Transformation;
-import org.bukkit.util.Vector;
-import org.joml.AxisAngle4f;
-import org.joml.Vector3f;
 
 import net.md_5.bungee.api.ChatColor;
 
 public class OMCUtil {
 
-	public static NamespacedKey getNameSpacedKeyFromRecipe(Recipe recipe) {
-		if(recipe instanceof ShapedRecipe keyHolder) return keyHolder.getKey();
-		if(recipe instanceof ShapelessRecipe keyHolder) return keyHolder.getKey();
-		if(recipe instanceof SmithingRecipe keyHolder) return keyHolder.getKey();
-		if(recipe instanceof FurnaceRecipe keyHolder) return keyHolder.getKey();
-		return null;
-	}
+	private static final Pattern hexColorCodePattern = Pattern.compile("#[a-fA-F0-9]{6}");
+	public static final int[] values = 			{1000,  900, 500,  400, 100,   90,  50,   40,  10,    9,   5,    4,   1};
+	public static final String[] romanLetters = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 	
-	public static Transformation getCenteredBlockTransformation() {
-		return new Transformation(new Vector3f(-.5f,-.5f,-.5f), new AxisAngle4f(), new Vector3f(1,1,1), new AxisAngle4f());
-	}
-	
-	public static final ArrayList<Material> SEE_THROUGH = new ArrayList<Material>();
-
-	static {
-		for(Material material : Material.values()) {
-			if(material.isOccluding()) continue;
-			SEE_THROUGH.add(material);
-		}
-	}
-	
-	public static boolean canSee(LivingEntity looker, LivingEntity target, double range) {
-		if(!looker.getWorld().equals(target.getWorld())) return false;
-		double rangeSq = range * range;
-		if(looker.getLocation().distanceSquared(target.getLocation()) > rangeSq) return false;
-		World w = looker.getWorld();
-
-		if(true) {
-			Location source = looker.getEyeLocation();
-			Location targetLoc = target.getLocation();
-			Vector toTarget = targetLoc.toVector().subtract(source.toVector()).normalize();
-			double distanceLeft = range;
-			
-			while(distanceLeft > 0) {
-				RayTraceResult rtr = w.rayTrace(source, toTarget, distanceLeft, FluidCollisionMode.NEVER, true, 0, (e) -> e.equals(target));
-				if(rtr == null) break;
-				if(rtr.getHitBlock() != null) {
-					if(!SEE_THROUGH.contains(rtr.getHitBlock().getType())) break;
-					distanceLeft -= rtr.getHitPosition().toLocation(w).distance(source);
-					source = rtr.getHitPosition().toLocation(w).add(toTarget.clone().multiply(0.1));
-					continue;
-				}
-				return true;
+	public static String intToRoman(int num){
+		StringBuilder roman = new StringBuilder();
+		for(int i = 0; i < values.length; i++){
+			while(num >= values[i]){
+				num = num - values[i];
+				roman.append(romanLetters[i]);
 			}
 		}
-		if(true) {
-			Location source = looker.getEyeLocation();
-			Location targetLoc = target.getLocation().add(0, target.getHeight(), 0);
-			Vector toTarget = targetLoc.toVector().subtract(source.toVector()).normalize();
-			double distanceLeft = range;
-			
-			while(distanceLeft > 0) {
-				RayTraceResult rtr = w.rayTrace(source, toTarget, distanceLeft, FluidCollisionMode.NEVER, true, 0, (e) -> e.equals(target));
-				if(rtr == null) break;
-				if(rtr.getHitBlock() != null) {
-					if(!SEE_THROUGH.contains(rtr.getHitBlock().getType())) break;
-					distanceLeft -= rtr.getHitPosition().toLocation(w).distance(source);
-					source = rtr.getHitPosition().toLocation(w).add(toTarget.clone().multiply(0.1));
-					continue;
-				}
-				return true;
-			}
-		}
-		return false;
+		return roman.toString();
 	}
-	
+
 	public static float noteBlockToPitch(int note) {
 		return (float) ((Math.pow(2, note/12f))/2f);
 	}
-	
-	public static ItemStack createNamedItemstack(Material material, int stackSize, String name) {
-		return createNamedItemstack(material, stackSize, name, true);
-	}
-
-	public static ItemStack createNamedItemstack(Material material, int stackSize, String name, boolean hideData) {
-		return createNamedItemstack(new ItemStack(material, stackSize), name, hideData);
-	}
-
-	public static ItemStack createNamedItemstack(ItemStack it, String name) {
-		return createNamedItemstack(it, name, true);
-	}
-
-	public static ItemStack createNamedItemstack(ItemStack it, String name, boolean hideData) {
-
-		ItemMeta itm = it.getItemMeta();
-		itm.setDisplayName(name);
-		if(hideData) {
-			itm.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-			itm.addItemFlags(ItemFlag.HIDE_DESTROYS);
-			itm.addItemFlags(ItemFlag.HIDE_DYE);
-			itm.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-			itm.addItemFlags(ItemFlag.HIDE_PLACED_ON);
-			itm.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-			itm.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-		}
-		it.setItemMeta(itm);
-		return it;
-	}
-	
-	public static ItemStack createCMDItemstack(Material material, String name, int CMD) {
-		ItemStack it = new ItemStack(material);
-		ItemMeta itm = it.getItemMeta();
-		itm.setDisplayName(ChatColor.RESET + name);
-		itm.setCustomModelData(CMD);
-		it.setItemMeta(itm);
-		return it;
-	}
-	
-	private static final Pattern hexColorCodePattern = Pattern.compile("#[a-fA-F0-9]{6}");
 	
 	public static String translateChatColor(String s) {
 		if(s == null) return null;
@@ -156,134 +40,12 @@ public class OMCUtil {
 		}
 		return s;
 	}
-	
-	public static boolean isUnderRain(LivingEntity le) {
-		return le.getWorld().hasStorm() && isUnderSky(le) && !isInHotArea(le);
-	}
 
-	public static boolean isUnderSnow(LivingEntity le) {
-		return isUnderRain(le) && isInColdArea(le);
-	}
-
-	public static boolean isUnderSky(LivingEntity le) {
-		return le.getWorld().getHighestBlockAt(le.getLocation()).getY() < le.getLocation().getY() + 1;
-	}
-	
-	public static boolean isInColdArea(LivingEntity le) {
-		return le.getLocation().getBlock().getTemperature() <= 0.15;
-	}
-
-	public static boolean isInWarmArea(LivingEntity le) {
-		return le.getLocation().getBlock().getTemperature() >= 0.5;
-	}
-
-	public static boolean isInHotArea(LivingEntity le) {
-		return le.getLocation().getBlock().getTemperature() > 1;
-	}
-
-	public static int getSunlight(LivingEntity le) {
-		return le.getLocation().getBlock().getLightFromSky();
-	}
-
-	public static boolean isWet(LivingEntity le) {
-		return le.isInWater() || isUnderRain(le);
-	}
-	
-	public static boolean isSubmerged(LivingEntity le) {
-		Material b = le.getEyeLocation().getBlock().getType();
-
-		boolean bool = le.getEyeLocation().getBlock().getBlockData() instanceof Waterlogged w && w.isWaterlogged()
-				|| b.equals(Material.WATER)
-				|| b.equals(Material.KELP)
-				|| b.equals(Material.SEAGRASS)
-				|| b.equals(Material.TALL_SEAGRASS)
-				|| b.equals(Material.BUBBLE_COLUMN)
-				;
-		return bool;
-	}
-
-	public static void drawParticleLine(Location a, Location b, Particle particle) {
-		drawParticleLine(a, b, particle, 0.1d);
-	}
-
-	public static void drawParticleLine(Location a, Location b, Particle particle, double resolution) {
-		drawParticleLine(a, b, particle, resolution, 1);
-	}
-
-	public static void drawParticleLine(Location a, Location b, Particle particle, double resolution, int pamount) {
-		drawParticleLine(a, b, particle, resolution, pamount, new Vector());
-	}
-
-	public static void drawParticleLine(Location a, Location b, Particle particle, double resolution, int pamount, Vector spread) {
-		drawParticleLine(a, b, particle, resolution, pamount, spread, 0.0d);
-	}
-
-	public static void drawParticleLine(Location a, Location b, Particle particle, double resolution, int pamount, Vector spread, double speed) {
-		drawParticleLine(a, b, particle, resolution, pamount, spread, speed, null);
-	}
-	
-	public static void drawParticleLine(Location a, Location b, Particle particle, double resolution, int pamount, Vector spread, double speed, Object options) {
-		double d = a.distance(b);
-		int amount = (int) (d/resolution) + 2;
-
-		Vector a2b = b.toVector().subtract(a.toVector()).normalize().multiply(d/amount);
-		Location particleloc = a.clone();
-		for(int c = amount; c > 0; c--) {
-			particleloc.getWorld().spawnParticle(particle, particleloc, pamount, spread.getX(), spread.getY(), spread.getZ(), speed, options, true);
-			particleloc.add(a2b);
-		}
-	}
-	
-	public static Vector lerp(Vector a, Vector b, double i) {
-		return a.multiply(1 - i).add(b.multiply(i));
-	}
-	
-	public static void spawnMovingParticle(Particle particle, Location loc, Vector dir, double speed) {
-		loc.getWorld().spawnParticle(particle, loc, 0, dir.getX(), dir.getY(), dir.getZ(), speed, null, true);
-	}
-	
-	public static final Vector VERTICAL = new Vector(0,1,0);
-
-	public static boolean isLookingAtEntity(LivingEntity looker, Entity target) {
-		Location startLocation = looker.getEyeLocation();
-		Vector direction = startLocation.getDirection();
-		double maxDistance = startLocation.distance(target.getLocation()) + 1; //add 1 in case looking from bottom
-		
-		RayTraceResult rtr = startLocation.getWorld().rayTrace(startLocation, direction, maxDistance, FluidCollisionMode.NEVER, true, 0.0, (t) -> t.equals(target));
-		return rtr != null;
-	}
-	
-	public static Vector validateVector(Vector v) {
-		if(v.getX() == 0) v.setX(Float.MIN_VALUE);
-		if(v.getY() == 0) v.setY(Float.MIN_VALUE);
-		if(v.getZ() == 0) v.setZ(Float.MIN_VALUE);
-		return v;
-	}
-
-	public static Vector getPerpendicularVector(Vector v) {
-		Vector direction = validateVector(v.clone());
-		return new Vector(1, 1, (-direction.getX() * 1 - direction.getY() * 1) / direction.getZ()).normalize();
-	}
-
-	public static Vector getRandomVector() {
-		Random r = new Random();
-		return new Vector((r.nextDouble() * 2)-1d,(r.nextDouble() * 2)-1d,(r.nextDouble() * 2)-1d).normalize();
-	}
-
-	public static Vector getRelativeUpUnitVector(Location loc) {
-		final Location location = loc.clone();
-		location.setPitch(loc.getPitch() + 90);
-		return location.getDirection();
-	}
-	
 	public static double map(double input_start, double input_end, double output_start, double output_end, double input) {
-//		double slope = (output_end - output_start) / (input_end - input_start);
-//		double output = output_start + slope * (input - input_start);
-//		return output;
-		return mapOneRangeToAnother(input, input_start, input_end, output_start, output_end, 3);
+		return map(input, input_start, input_end, output_start, output_end, 3);
 	}
 	
-	public static double mapOneRangeToAnother(double sourceNumber, double fromA, double fromB, double toA, double toB, int decimalPrecision ) {
+	public static double map(double sourceNumber, double fromA, double fromB, double toA, double toB, int decimalPrecision ) {
 	    double deltaA = fromB - fromA;
 	    double deltaB = toB - toA;
 	    double scale  = deltaB / deltaA;
@@ -294,19 +56,6 @@ public class OMCUtil {
 	    return (double) Math.round(finalNumber * calcScale) / calcScale;
 	}
 
-	public static final int[] values = 			{1000,  900, 500,  400, 100,   90,  50,   40,  10,    9,   5,    4,   1};
-	public static final String[] romanLetters = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-
-	public static String intToRoman(int num){
-		StringBuilder roman = new StringBuilder();
-		for(int i = 0; i < values.length; i++){
-			while(num >= values[i]){
-				num = num - values[i];
-				roman.append(romanLetters[i]);
-			}
-		}
-		return roman.toString();
-	}
 }
 
 

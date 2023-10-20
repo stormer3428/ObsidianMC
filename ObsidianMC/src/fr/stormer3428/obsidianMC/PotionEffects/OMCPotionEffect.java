@@ -8,9 +8,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import fr.stormer3428.obsidianMC.Config.PluginTied;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 import fr.stormer3428.obsidianMC.Manager.OMCPotionEffectManager;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 public class OMCPotionEffect implements PluginTied{
 

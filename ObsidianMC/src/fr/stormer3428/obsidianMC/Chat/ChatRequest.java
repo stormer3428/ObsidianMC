@@ -6,7 +6,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
 import fr.stormer3428.obsidianMC.Manager.OMCChatRequestManager;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 
 public class ChatRequest {
 

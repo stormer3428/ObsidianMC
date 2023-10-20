@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 
 public enum OMCLang {
 

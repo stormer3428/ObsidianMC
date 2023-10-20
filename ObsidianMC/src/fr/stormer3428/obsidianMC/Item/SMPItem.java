@@ -12,8 +12,8 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import fr.stormer3428.obsidianMC.Manager.OMCItemManager;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
 import fr.stormer3428.obsidianMC.Util.OMCUtil;
 
 /**

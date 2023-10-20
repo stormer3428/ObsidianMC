@@ -7,12 +7,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
-import fr.stormer3428.obsidianMC.Util.OMCUtil;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
+import fr.stormer3428.obsidianMC.Util.Geometry.GeometryUtils;
 
 public class DisplayGeometry {
 	
-	private Vector direction = OMCUtil.VERTICAL.clone();
+	private Vector direction = GeometryUtils.VERTICAL.clone();
 	private Vector loc;
 	private World world;
 	

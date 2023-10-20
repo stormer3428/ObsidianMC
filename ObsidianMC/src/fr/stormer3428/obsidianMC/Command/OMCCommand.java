@@ -10,8 +10,8 @@ import org.bukkit.event.server.TabCompleteEvent;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
 import fr.stormer3428.obsidianMC.Manager.OMCCommandManager;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 /**
  * This object represents a Minecraft command in the form of a signature and {@link OMCVariable} system, </br>

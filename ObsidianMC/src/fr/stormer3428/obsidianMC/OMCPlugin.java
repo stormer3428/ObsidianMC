@@ -20,8 +20,8 @@ import fr.stormer3428.obsidianMC.Config.BooleanConfigValue;
 import fr.stormer3428.obsidianMC.Config.ConfigHolder;
 import fr.stormer3428.obsidianMC.Config.PluginTied;
 import fr.stormer3428.obsidianMC.Manager.ABSBDefenseMatrix;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 @AutoConfig
 public abstract class OMCPlugin extends JavaPlugin{

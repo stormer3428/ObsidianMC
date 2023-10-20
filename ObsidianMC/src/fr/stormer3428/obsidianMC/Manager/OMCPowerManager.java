@@ -13,7 +13,6 @@ import fr.stormer3428.obsidianMC.Command.OMCVariable;
 import fr.stormer3428.obsidianMC.Config.ConfigHolder;
 import fr.stormer3428.obsidianMC.Power.OMCPower;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 public abstract class OMCPowerManager extends ConfigHolder implements Listener{
 

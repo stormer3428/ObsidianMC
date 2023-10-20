@@ -14,7 +14,6 @@ import fr.stormer3428.obsidianMC.Command.OMCCommand;
 import fr.stormer3428.obsidianMC.Command.OMCVariable;
 import fr.stormer3428.obsidianMC.Config.PluginTied;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
 
 public abstract class OMCCommandManager implements CommandExecutor, TabCompleter, PluginTied{
 

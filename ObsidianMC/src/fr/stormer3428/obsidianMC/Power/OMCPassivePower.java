@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import fr.stormer3428.obsidianMC.Item.OMCItem;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 
 public abstract class OMCPassivePower extends OMCPower{
 

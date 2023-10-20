@@ -1,4 +1,4 @@
-package fr.stormer3428.obsidianMC.Util;
+package fr.stormer3428.obsidianMC.Manager;
 
 import java.util.ArrayList;
 

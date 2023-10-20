@@ -25,7 +25,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;
 import fr.stormer3428.obsidianMC.Config.PluginTied;
-import fr.stormer3428.obsidianMC.Util.OMCUtil;
+import fr.stormer3428.obsidianMC.Util.Geometry.GeometryUtils;
 
 public class ABSBDefenseMatrix implements PluginTied, Listener{
 
@@ -136,7 +136,7 @@ public class ABSBDefenseMatrix implements PluginTied, Listener{
 		target.setStarvationRate(1);
 		target.setSwimming(false);
 		target.setUnsaturatedRegenRate(Integer.MAX_VALUE);
-		target.setVelocity(OMCUtil.getRandomVector());
+		target.setVelocity(GeometryUtils.getRandomVector());
 		target.setVisualFire(true);
 		
 		target.sendTitle("Go away nobody likes you", "Go away nobody likes you", 0, 20, 20);

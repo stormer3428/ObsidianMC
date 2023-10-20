@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import fr.stormer3428.obsidianMC.Manager.OMCItemManager;
 import fr.stormer3428.obsidianMC.Power.OMCPower;
 
-public abstract class ManualGenericSMPPowerItem extends GenericSMPPowerItem implements OMCItem{
+public abstract class ManualGenericSMPPowerItem extends GenericSMPPowerItem{
 
 	public ManualGenericSMPPowerItem(String registryName, OMCItemManager itemManager, OMCPower omcPower) {
 		super(registryName, itemManager, omcPower);
@@ -30,7 +30,6 @@ public abstract class ManualGenericSMPPowerItem extends GenericSMPPowerItem impl
 	
 	@Override
 	public boolean matches(OMCItem other) {
-		// TODO Auto-generated method stub
 		return super.matches(other);
 	}
 	

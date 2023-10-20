@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.command.CommandSender;
 
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 
 /**
  * 

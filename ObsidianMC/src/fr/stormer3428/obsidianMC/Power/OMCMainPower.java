@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
+import fr.stormer3428.obsidianMC.Manager.OMCLogger;
 
 public abstract class OMCMainPower extends OMCPassivePower{
 

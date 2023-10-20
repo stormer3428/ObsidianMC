@@ -29,7 +29,6 @@ import fr.stormer3428.obsidianMC.Item.OMCItem;
 import fr.stormer3428.obsidianMC.Item.SMPPowerItem;
 import fr.stormer3428.obsidianMC.Power.OMCPassivePower;
 import fr.stormer3428.obsidianMC.Util.OMCLang;
-import fr.stormer3428.obsidianMC.Util.OMCLogger;
 import fr.stormer3428.obsidianMC.Util.OMCUtil;
 
 public abstract class OMCItemManager extends ConfigHolder implements Listener{
