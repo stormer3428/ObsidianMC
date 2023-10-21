@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,6 +19,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +27,8 @@ import org.bukkit.inventory.ItemStack;
 import fr.stormer3428.obsidianMC.OMCPlugin;
 import fr.stormer3428.obsidianMC.Config.PluginTied;
 
-public abstract class OMCSoulbindingManager implements PluginTied, Listener{
+@Deprecated
+public abstract class OMCSoulbindingManagerLegacy implements PluginTied, Listener{
 
 	protected abstract boolean isSoulboundItem(ItemStack it);
 	protected abstract boolean isSuitable(ArrayList<ItemStack> soulboundItems);
@@ -46,14 +47,8 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent e) {
-		ItemStack item = e.getItemDrop().getItemStack();
-		Player p = e.getPlayer();
-		if(isSoulboundItem(item)) {
-			if(!restituteMap.containsKey(p.getUniqueId())) restituteMap.put(p.getUniqueId(), new ArrayList<ItemStack>());
-			restituteMap.get(p.getUniqueId()).add(new ItemStack(item));
-			item.setAmount(0);
-		}
-		validate(p);
+		if(!isSoulboundItem(e.getItemDrop().getItemStack())) return;
+		e.setCancelled(true);
 	}
 
 	@EventHandler
@@ -69,39 +64,32 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 	@EventHandler
 	public void onDrag(InventoryDragEvent e) {
 		Inventory top = e.getView().getTopInventory();
-		if(!isSoulboundItem(e.getOldCursor())) return;
-		if(top instanceof CraftingInventory ci && ci.getSize() == 5) {
-			for(int i : e.getRawSlots()) if(i < 9){
-				e.setCancelled(true);
-				return;
-			}
+		if(top == null) return;
+		if(!(top instanceof CraftingInventory ci && ci.getSize() == 5)) return;
+		for(Entry<Integer, ItemStack> entry : e.getNewItems().entrySet()) {
+			int slot = entry.getKey();
+			ItemStack it = entry.getValue();
+			if(slot > 5) continue;
+			if(!isSoulboundItem(it)) continue;
+			e.setCancelled(true);
 			return;
-		}
-		for(int i : e.getRawSlots()) {
-			Bukkit.broadcastMessage(i + "");
-			if(i == e.getView().convertSlot(i)) {
-				e.setCancelled(true);
-				return;
-			}
 		}
 	}
 
 	@EventHandler 
 	public void inventoryClick(InventoryClickEvent e) {
 		Inventory top = e.getView().getTopInventory();
-
-		boolean clickedTop = e.getClickedInventory().equals(e.getView().getTopInventory());
-
-		boolean offHandsoulbound = e.getClick().equals(ClickType.SWAP_OFFHAND) && isSoulboundItem(e.getWhoClicked().getInventory().getItemInOffHand());
-		boolean cursorSoulbound = isSoulboundItem(e.getCursor());
-		boolean hotbarSoulbound = e.getHotbarButton() != -1 && isSoulboundItem(e.getView().getBottomInventory().getItem(e.getHotbarButton()));
-
-		boolean inSurvivalInv = top instanceof CraftingInventory ci && ci.getSize() == 5;
-		boolean currentSoulbound = isSoulboundItem(e.getCurrentItem());
-		boolean shiftClick = e.isShiftClick();
-
-		if 		((clickedTop && (!shiftClick && (offHandsoulbound || cursorSoulbound || hotbarSoulbound))) 
-				|| (!clickedTop && shiftClick && !inSurvivalInv && currentSoulbound)) e.setCancelled(true);
+		if(top == null) return;
+		if(top instanceof CraftingInventory ci && ci.getSize() == 5 && !top.equals(e.getClickedInventory())) return;
+		if(
+				isSoulboundItem(e.getCurrentItem()) ||
+				isSoulboundItem(e.getCursor()) ||
+				(e.getHotbarButton() == -1 ? false : isSoulboundItem(e.getView().getBottomInventory().getItem(e.getHotbarButton()))) ||
+				(e.getClick().equals(ClickType.SWAP_OFFHAND) && isSoulboundItem(e.getWhoClicked().getInventory().getItemInOffHand()))
+				) {
+			e.setCancelled(true);
+			return;
+		}
 	}
 
 	private final HashMap<UUID, ArrayList<ItemStack>> restituteMap = new HashMap<>();
@@ -117,6 +105,15 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 			if(!restituteMap.containsKey(p.getUniqueId())) restituteMap.put(p.getUniqueId(), new ArrayList<ItemStack>());
 			restituteMap.get(p.getUniqueId()).add(item);
 		}
+	}
+
+	@EventHandler
+	public void onRespawn(PlayerRespawnEvent e) {
+		Player p = e.getPlayer();
+		if(!restituteMap.containsKey(p.getUniqueId())) restituteMap.put(p.getUniqueId(), new ArrayList<ItemStack>());
+		ArrayList<ItemStack> toRestitute = restituteMap.get(p.getUniqueId());
+		for(ItemStack it : toRestitute) p.getInventory().addItem(it);
+		toRestitute.clear();
 	}
 
 	@EventHandler
@@ -153,14 +150,8 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 	}
 
 	public boolean validate(Player p) {
-		if(restituteMap.containsKey(p.getUniqueId())) {
-			ArrayList<ItemStack> list = restituteMap.remove(p.getUniqueId());
-			ArrayList<ItemStack> remaining = new ArrayList<ItemStack>();
-			for(ItemStack it : list) for(Entry<Integer, ItemStack> entry : p.getInventory().addItem(it).entrySet()) remaining.add(entry.getValue());
-			restituteMap.put(p.getUniqueId(), remaining);
-		}
-
 		ArrayList<ItemStack> soulboundItems = getSoulboundItems(p);
+
 		if(isSuitable(soulboundItems)) return true;
 		fixInventory(soulboundItems, p);
 		return false;
