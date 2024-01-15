@@ -14,7 +14,7 @@ public abstract class SetDurationPower extends UnsetDurationPower{
 		super(registryName/*, powerManager*/);
 	}
 	
-	protected boolean empower(ItemStack it, Player p) {
+	public boolean empower(ItemStack it, Player p) {
 		if(!cast(it, p)) return false;
 		empowered.add(p.getUniqueId());
 		Bukkit.getScheduler().scheduleSyncDelayedTask(OMCPlugin.i, () -> putOnCooldown(p), getDuration());

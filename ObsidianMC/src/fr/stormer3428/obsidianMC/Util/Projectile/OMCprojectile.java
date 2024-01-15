@@ -68,8 +68,7 @@ public abstract class OMCprojectile extends BukkitRunnable{
 		if(inGround) {
 			if(--afterImpactLifespan <= 0) cancel();
 			else inGroundTick();
-		}
-		if(--maxLifespan <= 0) cancel();
+		}else if(--maxLifespan <= 0) cancel();
 	}
 
 	public boolean isBlockColliding() {
@@ -108,5 +107,12 @@ public abstract class OMCprojectile extends BukkitRunnable{
 		return this;
 	}
 	
+	public OMCprojectile setMaxLifespan(int maxLifespan) {
+		this.maxLifespan = maxLifespan;
+		return this;
+	}
 	
+	public int getMaxLifespan() {
+		return maxLifespan;
+	}
 }

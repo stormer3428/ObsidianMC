@@ -103,7 +103,6 @@ public class DisplayGeometry {
 			return this;
 		}
 		rotateAroundAxis(crossProduct, direction.angle(newDirection));
-		direction = newDirection.clone();
 		return this;
 	}
 

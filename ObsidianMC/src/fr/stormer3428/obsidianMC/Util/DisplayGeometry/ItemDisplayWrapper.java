@@ -20,6 +20,7 @@ public class ItemDisplayWrapper implements DisplayWrapper{
 	}
 	
 	private ItemDisplayWrapper updatePosition() {
+		if(itemDisplay.isDead()) return this;
 		Location worldLocation = origin.clone().add(loc.clone().multiply(scale));
 		worldLocation.setDirection(direction);
 		itemDisplay.teleport(worldLocation);
@@ -100,5 +101,8 @@ public class ItemDisplayWrapper implements DisplayWrapper{
 		return updatePosition();
 	}
 	
+	public ItemDisplay getItemDisplay() {
+		return itemDisplay;
+	}
 	
 }

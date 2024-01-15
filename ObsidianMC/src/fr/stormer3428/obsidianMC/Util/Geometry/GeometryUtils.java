@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
@@ -14,7 +15,7 @@ public class GeometryUtils {
 	public static final Vector VERTICAL = new Vector(0,1,0);
 	
 	public static Vector lerp(Vector a, Vector b, double i) {
-		return a.multiply(1 - i).add(b.multiply(i));
+		return a.clone().multiply(1 - i).add(b.clone().multiply(i));
 	}
 	
 	public static Vector validateVector(Vector v) {
@@ -40,7 +41,6 @@ public class GeometryUtils {
 		return location.getDirection();
 	}
 	
-	
 	public static ArrayList<Vector> getCircularVectors(int amount){
 		ArrayList<Vector> list = new ArrayList<>();
 		if(amount <= 0) return list;
@@ -56,6 +56,29 @@ public class GeometryUtils {
 		double angle = Math.PI * 2 / amount;
 		Vector v = getPerpendicularVector(axis);
 		for(int i = amount; i > 0; i--) list.add(v.rotateAroundAxis(axis, angle).clone());
+		return list;
+	}
+	
+	public static ArrayList<Vector> getSphericalVectors(double radius, boolean hollow){
+		ArrayList<Vector> list = new ArrayList<>();
+		double radiusSQ = radius * radius;
+		double innerRadiusSQ = (radius-1) * (radius-1);
+
+		int min = (int) (- radius - 1);
+		int max = (int) (radius + 1);
+		
+		for(int x = max; x > min; x--) for(int y = max; y > min; y--) for(int z = max; z > min; z--) {
+			double distance = x*x + y*y + z*z;
+			if(distance > radiusSQ) continue;
+			if(hollow && distance < innerRadiusSQ) continue;
+			list.add(new Vector(x,y,z));
+		}
+		return list;
+	}
+	
+	public static ArrayList<Location> getSphericalLocations(Block center, double radius, boolean hollow){
+		ArrayList<Location> list = new ArrayList<Location>();
+		for(Vector v : getSphericalVectors(radius, hollow)) list.add(center.getLocation().add(v));
 		return list;
 	}
 	

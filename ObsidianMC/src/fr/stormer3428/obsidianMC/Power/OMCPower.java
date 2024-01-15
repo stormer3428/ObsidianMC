@@ -72,7 +72,7 @@ public abstract class OMCPower implements PluginTied, Listener{
 		return onCooldown.containsKey(uuid);
 	}
 
-	protected boolean empower(ItemStack it, Player p) {
+	public boolean empower(ItemStack it, Player p) {
 		if(!cast(it, p)) return false;
 		putOnCooldown(p);
 		return true;
@@ -82,15 +82,15 @@ public abstract class OMCPower implements PluginTied, Listener{
 		putOnCooldown(p, getCooldown());
 	}
 
-	protected void putOnCooldown(Player p, int abilityCooldown) {
+	public void putOnCooldown(Player p, int abilityCooldown) {
 		putOnCooldown(p.getUniqueId(), abilityCooldown);
 	}
 
-	protected void putOnCooldown(UUID uuid) {
+	public void putOnCooldown(UUID uuid) {
 		putOnCooldown(uuid, getCooldown());
 	}
 
-	protected void putOnCooldown(UUID uuid, int abilityCooldown) {
+	public void putOnCooldown(UUID uuid, int abilityCooldown) {
 		onCooldown.put(uuid, Math.max(getCooldown(uuid), abilityCooldown));
 	}
 

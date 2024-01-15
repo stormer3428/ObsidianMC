@@ -55,7 +55,4 @@ public abstract class OMCPassivePower extends OMCPower{
 	public String getDisplayName() {
 		return "passive.displayname." + getClass().getSimpleName();
 	}
-
-
-
 }

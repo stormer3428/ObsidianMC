@@ -14,7 +14,6 @@ import fr.stormer3428.obsidianMC.Util.OMCUtil;
 
 public class OMCExplosion {
 
-
 	public OMCExplosion(Location loc, double yield) {
 		this(loc, yield, null);
 	}

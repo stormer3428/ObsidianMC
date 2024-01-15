@@ -212,7 +212,6 @@ public abstract class OMCItemManager extends ConfigHolder implements Listener{
 	private final HashMap<UUID, OMCPassivePower> MAIN_HAND_MAP = new HashMap<>();
 	private final HashMap<UUID, OMCPassivePower> OFF_HAND_MAP = new HashMap<>();
 
-
 	public void checkHoldingMaps(Player p) {
 		Bukkit.getScheduler().runTaskLater(OMCPlugin.i, () -> {
 

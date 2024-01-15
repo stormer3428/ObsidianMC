@@ -31,16 +31,16 @@ public abstract class UnsetDurationPower extends OMCPower{
 	/*
 	 * It is expected to call "putOnCooldown when ability ends"
 	 */
-	protected boolean empower(ItemStack it, Player p) {
+	public boolean empower(ItemStack it, Player p) {
 		if(!cast(it, p)) return false;
 		empowered.add(p.getUniqueId());
 		return true;
 	}
 
-	protected void putOnCooldown(UUID uuid, int abilityCooldown) {
-		empowered.remove(uuid);
+	public void putOnCooldown(UUID uuid, int abilityCooldown) {
 		Player p = Bukkit.getPlayer(uuid);
-		if(p != null) onDepower(p);
+		if(p != null && empowered.contains(uuid)) onDepower(p);
+		empowered.remove(uuid);
 		super.putOnCooldown(uuid, abilityCooldown);
 	}
 

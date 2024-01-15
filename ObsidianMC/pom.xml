@@ -1,9 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.stormer3428</groupId>
 	<artifactId>ObsidianMC</artifactId>
-	<version>0.4.1-SNAPSHOT</version>
+	<version>0.5.0-SNAPSHOT</version>
 	<name>ObsidianMC</name>
+
 	<description>A library for plugins made by stormer3428</description>
 	<packaging>jar</packaging>
 	<repositories>
@@ -49,9 +52,9 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
 				<configuration>
-					<release>16</release>
+					<source>17</source>
+					<target>17</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -103,7 +106,8 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<newVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT</newVersion>
+									<newVersion>
+										${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT</newVersion>
 								</configuration>
 							</execution>
 						</executions>
@@ -131,7 +135,8 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<newVersion>${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0-SNAPSHOT</newVersion>
+									<newVersion>
+										${parsedVersion.majorVersion}.${parsedVersion.nextMinorVersion}.0-SNAPSHOT</newVersion>
 								</configuration>
 							</execution>
 						</executions>
@@ -159,7 +164,8 @@
 								</goals>
 								<phase>validate</phase>
 								<configuration>
-									<newVersion>${parsedVersion.nextMajorVersion}.0.0-SNAPSHOT</newVersion>
+									<newVersion>
+										${parsedVersion.nextMajorVersion}.0.0-SNAPSHOT</newVersion>
 								</configuration>
 							</execution>
 						</executions>

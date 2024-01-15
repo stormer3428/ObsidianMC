@@ -21,9 +21,9 @@ import fr.stormer3428.obsidianMC.Util.OMCLang;
 
 public class OMCPremadeCommandFactory {
 
-	public static OMCCommand[] getGiveCommands(OMCItemManager itemManager, String root, boolean requiresPermission) {
+	public static OMCCommand[] getGiveCommands(OMCItemManager itemManager, String root) {
 		return new OMCCommand[] {
-				new OMCCommand(root + " give", requiresPermission) {
+				new OMCCommand(root + " give", true) {
 
 					@Override
 					public boolean execute(CommandSender sender, ArrayList<String> args) {
@@ -31,7 +31,7 @@ public class OMCPremadeCommandFactory {
 					}
 				}
 				,
-				new OMCCommand(root + " give %P%", requiresPermission) {
+				new OMCCommand(root + " give %P%", true) {
 
 					@Override
 					public boolean execute(CommandSender sender, ArrayList<String> args) {
@@ -39,7 +39,7 @@ public class OMCPremadeCommandFactory {
 					}
 				}
 				,
-				new OMCCommand(root + " give %P% %ITEM%", requiresPermission) {
+				new OMCCommand(root + " give %P% %ITEM%", true) {
 
 					@Override
 					public boolean execute(CommandSender sender, ArrayList<String> args) {
@@ -54,7 +54,7 @@ public class OMCPremadeCommandFactory {
 					}
 				}
 				,
-				new OMCCommand(root + " give %P% %ITEM% %V%", requiresPermission) {
+				new OMCCommand(root + " give %P% %ITEM% %V%", true) {
 
 					@Override
 					public boolean execute(CommandSender sender, ArrayList<String> args) {
@@ -178,7 +178,11 @@ public class OMCPremadeCommandFactory {
 	}
 	
 	
-	
+	public static final String serializeItemstack(ItemStack it) {
+		YamlConfiguration config = new YamlConfiguration();
+		config.set("stringBlob", it);
+		return config.saveToString();
+	}
 
 
 

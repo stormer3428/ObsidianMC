@@ -1,12 +1,12 @@
 package fr.stormer3428.obsidianMC.Manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -78,7 +78,7 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 			return;
 		}
 		for(int i : e.getRawSlots()) {
-			Bukkit.broadcastMessage(i + "");
+			//			Bukkit.broadcastMessage(i + "");
 			if(i == e.getView().convertSlot(i)) {
 				e.setCancelled(true);
 				return;
@@ -90,7 +90,7 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 	public void inventoryClick(InventoryClickEvent e) {
 		Inventory top = e.getView().getTopInventory();
 
-		boolean clickedTop = e.getClickedInventory().equals(e.getView().getTopInventory());
+		boolean clickedTop = e.getView().getTopInventory().equals(e.getClickedInventory());
 
 		boolean offHandsoulbound = e.getClick().equals(ClickType.SWAP_OFFHAND) && isSoulboundItem(e.getWhoClicked().getInventory().getItemInOffHand());
 		boolean cursorSoulbound = isSoulboundItem(e.getCursor());
@@ -101,10 +101,10 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 		boolean shiftClick = e.isShiftClick();
 
 		if 		((clickedTop && (!shiftClick && (offHandsoulbound || cursorSoulbound || hotbarSoulbound))) 
-				|| (!clickedTop && shiftClick && !inSurvivalInv && currentSoulbound)) e.setCancelled(true);
+		|| (!clickedTop && shiftClick && !inSurvivalInv && currentSoulbound)) e.setCancelled(true);
 	}
 
-	private final HashMap<UUID, ArrayList<ItemStack>> restituteMap = new HashMap<>();
+	protected final HashMap<UUID, ArrayList<ItemStack>> restituteMap = new HashMap<>();
 
 	@EventHandler
 	public void onDeath(PlayerDeathEvent e) {
@@ -143,8 +143,10 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 
 	public ArrayList<ItemStack> getSoulboundItems(Player p){
 		ArrayList<ItemStack> soulboundItems = new ArrayList<>(); 
-
-		for(ItemStack it : p.getInventory().getContents()) {
+		ArrayList<ItemStack> toCheck = new ArrayList<ItemStack>(Arrays.asList(p.getInventory().getContents()));
+		ItemStack cursor = p.getOpenInventory().getCursor();
+		if(cursor != null) toCheck.add(cursor);
+		for(ItemStack it : toCheck) {
 			if(it == null) continue;
 			if(!isSoulboundItem(it)) continue;
 			soulboundItems.add(it);
@@ -153,6 +155,7 @@ public abstract class OMCSoulbindingManager implements PluginTied, Listener{
 	}
 
 	public boolean validate(Player p) {
+		if(p.isDead()) return false;
 		if(restituteMap.containsKey(p.getUniqueId())) {
 			ArrayList<ItemStack> list = restituteMap.remove(p.getUniqueId());
 			ArrayList<ItemStack> remaining = new ArrayList<ItemStack>();

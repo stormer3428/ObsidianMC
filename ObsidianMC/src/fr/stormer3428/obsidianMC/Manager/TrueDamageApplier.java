@@ -1,5 +1,5 @@
 package fr.stormer3428.obsidianMC.Manager;
-
+/*
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
@@ -80,4 +80,4 @@ public class TrueDamageApplier implements Listener,PluginTied{
 	@Override
 	public void onPluginReload() {}
 
-}
+}*/
