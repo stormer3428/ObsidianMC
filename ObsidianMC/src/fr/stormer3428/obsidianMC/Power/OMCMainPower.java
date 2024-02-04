@@ -54,6 +54,7 @@ public abstract class OMCMainPower extends OMCPassivePower{
 		else if(++selected >= size) selected = 0;
 
 		selectedPower.put(p.getUniqueId(), selected);
+		onActionBarTick(p);
 	}
 
 
@@ -65,15 +66,19 @@ public abstract class OMCMainPower extends OMCPassivePower{
 	
 	@Override
 	public void onHoldingTick(Player p, int ticker, ItemStack it, boolean offHand) {
-		onActionBarTick(p);
+		if(ticker%20==0) onActionBarTick(p);
 	}
 
 	@Override
-	public void onStartHolding(Player p, boolean offHand) {}
+	public void onStartHolding(Player p, boolean offHand) {
+		onActionBarTick(p);
+	}
 
 	@Override
 	public void onStopHolding(Player p, boolean offHand) {}
 	
 	@Override
-	public void onSwap(Player p, boolean offHand) {}
+	public void onSwap(Player p, boolean offHand) {
+		onActionBarTick(p);
+	}
 }

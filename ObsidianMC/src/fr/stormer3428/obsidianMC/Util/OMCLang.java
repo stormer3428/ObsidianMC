@@ -76,7 +76,7 @@ public enum OMCLang {
 	@Override
 	public String toString() {
 		try {
-			return ChatColor.translateAlternateColorCodes('&', ChatColor.translateAlternateColorCodes('§', LANG.getString(this.path, this.def)));
+			return OMCUtil.translateChatColor(LANG.getString(this.path, this.def));
 		}catch (Exception e) {
 			return "INTERNAL ERROR, LANG NEVER INSTANCIATED, PLEASE CONTACT AN ADMIN ABOUT THIS ISSUE, (" + getClass().getSimpleName() + ")";
 		}

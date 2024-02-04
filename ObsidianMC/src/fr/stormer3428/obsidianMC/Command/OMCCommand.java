@@ -120,7 +120,7 @@ public abstract class OMCCommand {
 	public OMCCommand(String givenArchitecture, boolean requiresPermission) {
 		OMCLogger.debug("creating new command from architecture : ["+givenArchitecture+"]");
 		for(String arg : givenArchitecture.split(" ")) architecture.add(arg.split(ALIAS_SEPARATOR));
-		rawArchitecture = givenArchitecture;
+		this.rawArchitecture = givenArchitecture;
 		this.requiresPermission = requiresPermission;
 	}
 
