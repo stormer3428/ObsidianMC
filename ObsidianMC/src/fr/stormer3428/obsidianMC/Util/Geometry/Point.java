@@ -2,12 +2,12 @@ package fr.stormer3428.obsidianMC.Util.Geometry;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class Point implements Drawable{
+public class Point extends Drawable{
 
-	protected Vector location;
+	protected Vector location = new Vector();
 	protected Particle particle = Particle.CRIT_MAGIC;
 	protected Object particleData = null;
 	protected int particleAmount = 1;
@@ -18,10 +18,9 @@ public class Point implements Drawable{
 	protected boolean forceRender = true;
 
 	@Override
-	public void draw(Location location, double scale) {
-		World world = location.getWorld();
+	public void draw(Location location, double scale, Player p) {
 		Location particleLoc = location.clone().add(this.location.clone().multiply(scale));
-		world.spawnParticle(particle, particleLoc, particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, particleData, forceRender);
+		p.spawnParticle(particle, particleLoc, particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, particleData);
 	}
 
 	@Override
@@ -117,16 +116,5 @@ public class Point implements Drawable{
 	public Point setParticleData(Object particleData) {
 		this.particleData = particleData;
 		return this;
-	}
-	
-	@Override
-	public Point setForceRendering(boolean forceRender) {
-		this.forceRender = forceRender;
-		return this;
-	}
-
-	@Override
-	public boolean isForceRendering() {
-		return forceRender;
 	}
 }

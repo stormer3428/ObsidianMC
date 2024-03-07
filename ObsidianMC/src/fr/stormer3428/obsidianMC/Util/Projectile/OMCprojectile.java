@@ -17,11 +17,12 @@ public abstract class OMCprojectile extends BukkitRunnable{
 	protected boolean inGround = false;
 	protected int maxLifespan = 20 * 30;
 	protected int afterImpactLifespan = 20 * 5;
+	protected int subtick = 1;
 	protected Location location;
 	protected Vector velocity;
 	protected double projectileWidth;
-	
-	
+
+
 	public OMCprojectile(Location location, Vector velocity, double projectileWidth) {
 		this.location = location;
 		this.velocity = velocity;
@@ -36,39 +37,42 @@ public abstract class OMCprojectile extends BukkitRunnable{
 	protected abstract boolean onHit(RayTraceResult rtr);
 	protected abstract void inGroundTick();
 	protected abstract void display();
-	
+
 	public void move() {
+		Vector effectiveVelocity = velocity.clone().multiply(1.0/subtick);
 		if(inGround) return;
 		if(blockColliding && entityColliding) {
-			RayTraceResult rtr = location.getWorld().rayTrace(location, velocity, velocity.length(), FluidCollisionMode.NEVER, true, projectileWidth, entityPredicate);
+			RayTraceResult rtr = location.getWorld().rayTrace(location, effectiveVelocity, effectiveVelocity.length(), FluidCollisionMode.NEVER, true, projectileWidth, entityPredicate);
 			if(rtr != null && onHit(rtr)) {
 				inGround = true;
 				return;
 			}
 		}else if(blockColliding){
-			RayTraceResult rtr = location.getWorld().rayTraceBlocks(location, velocity, velocity.length(), FluidCollisionMode.NEVER, true);
+			RayTraceResult rtr = location.getWorld().rayTraceBlocks(location, effectiveVelocity, effectiveVelocity.length(), FluidCollisionMode.NEVER, true);
 			if(rtr != null && onHit(rtr)) {
 				inGround = true;
 				return;
 			}
 		}else if(entityColliding) {
-			RayTraceResult rtr = location.getWorld().rayTraceEntities(location, velocity, velocity.length(), projectileWidth, entityPredicate);
+			RayTraceResult rtr = location.getWorld().rayTraceEntities(location, effectiveVelocity, effectiveVelocity.length(), projectileWidth, entityPredicate);
 			if(rtr != null && onHit(rtr)) {
 				inGround = true;
 				return;
 			}
 		}
-		location.add(velocity);
+		location.add(effectiveVelocity);
 	}
 
 	@Override
 	public void run() {
-		move();
-		display();
-		if(inGround) {
-			if(--afterImpactLifespan <= 0) cancel();
-			else inGroundTick();
-		}else if(--maxLifespan <= 0) cancel();
+		for(int i = subtick; i > 0; i--) {
+			move();
+			display();
+			if(inGround) {
+				if(subtick == 0 && --afterImpactLifespan <= 0) cancel();
+				else inGroundTick();
+			}else if(subtick == 0 && --maxLifespan <= 0) cancel();
+		}
 	}
 
 	public boolean isBlockColliding() {
@@ -106,12 +110,12 @@ public abstract class OMCprojectile extends BukkitRunnable{
 		this.afterImpactLifespan = afterImpactLifespan;
 		return this;
 	}
-	
+
 	public OMCprojectile setMaxLifespan(int maxLifespan) {
 		this.maxLifespan = maxLifespan;
 		return this;
 	}
-	
+
 	public int getMaxLifespan() {
 		return maxLifespan;
 	}

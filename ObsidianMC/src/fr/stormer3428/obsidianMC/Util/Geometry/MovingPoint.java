@@ -2,29 +2,28 @@ package fr.stormer3428.obsidianMC.Util.Geometry;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class MovingPoint implements Drawable{
+public class MovingPoint extends Drawable{
 
 	private Vector location;
 	private Particle particle = Particle.CRIT_MAGIC;
 	private Object particleData = null;
 	private Vector particleDirection = new Vector(0,0,0);
 	private Vector particleOffsetDirection = new Vector(0,0,0);
-	private boolean forceRender = true;
 	private boolean staticDirection = false;
+	
 
 	@Override
-	public void draw(Location location, double scale) {
-		World world = location.getWorld();
+	public void draw(Location location, double scale, Player p) {
 		Location particleLoc = location.clone().add(this.location.clone().multiply(scale));
-		world.spawnParticle(particle, particleLoc, 
+		p.spawnParticle(particle, particleLoc, 
 				0, 
 				particleDirection.getX() + particleOffsetDirection.getX(),
 				particleDirection.getY() + particleOffsetDirection.getY(), 
 				particleDirection.getZ() + particleOffsetDirection.getZ(), 
-				particleDirection.clone().add(particleOffsetDirection).length(), particleData, forceRender);
+				particleDirection.clone().add(particleOffsetDirection).length(), particleData);
 	}
 
 	public void draw(Location location) {
@@ -121,17 +120,6 @@ public class MovingPoint implements Drawable{
 		return this;
 	}
 
-	@Override
-	public MovingPoint setForceRendering(boolean forceRender) {
-		this.forceRender = forceRender;
-		return this;
-	}
-
-	@Override
-	public boolean isForceRendering() {
-		return forceRender;
-	}
-
 	public MovingPoint setStaticDirection(boolean staticDirection) {
 		this.staticDirection = staticDirection;
 		return this;
@@ -140,5 +128,4 @@ public class MovingPoint implements Drawable{
 	public boolean isStaticDirection() {
 		return staticDirection;
 	}
-
 }

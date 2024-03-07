@@ -32,8 +32,11 @@ public abstract class UnsetDurationPower extends OMCPower{
 	 * It is expected to call "putOnCooldown when ability ends"
 	 */
 	public boolean empower(ItemStack it, Player p) {
-		if(!cast(it, p)) return false;
 		empowered.add(p.getUniqueId());
+		if(!cast(it, p)) {
+			empowered.remove(p.getUniqueId());
+			return false;
+		}
 		return true;
 	}
 

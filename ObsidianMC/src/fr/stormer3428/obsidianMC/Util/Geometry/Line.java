@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class Line implements Drawable{
+public class Line extends Drawable{
 
 	private Vector a;
 	private Vector b;
@@ -19,7 +20,6 @@ public class Line implements Drawable{
 	private float particleSpreadZ = 0;
 	private float particleSpeed = 0;
 	private double resolution = 0.1d;
-	private boolean forceRender = true;
 	
 	public Line(Vector a, Vector b) {
 		this.a = a.clone();
@@ -41,16 +41,17 @@ public class Line implements Drawable{
 	public void setB(Vector b) {
 		this.b = b;
 	}
-	
-	public void drawPoint(World world, Vector location) {
-		world.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, particleData, forceRender);
-	}
 
 	@Override
-	public void draw(Location location, double scale) {
+	public void draw(Location location, double scale, Player p) {
 		World world = location.getWorld();
 		Vector locationVector = location.toVector();
-		for(Vector point : getInterpolatedPoints(a.clone().multiply(scale) , b.clone().multiply(scale))) drawPoint(world, point.add(locationVector));		
+		for(Vector point : getInterpolatedPoints(a.clone().multiply(scale) , b.clone().multiply(scale))) drawPoint(world, point.add(locationVector), p);		
+		
+	}
+	
+	public void drawPoint(World world, Vector location, Player p) {
+		p.spawnParticle(particle, location.getX(), location.getY(), location.getZ(), particleAmount, particleSpreadX, particleSpreadY, particleSpreadZ, particleSpeed, particleData);
 	}
 
 	public ArrayList<Vector> getInterpolatedPoints(Vector a, Vector b){
@@ -156,12 +157,6 @@ public class Line implements Drawable{
 		this.particleData = particleData;
 		return this;
 	}
-
-	@Override
-	public Line setForceRendering(boolean forceRender) {
-		this.forceRender = forceRender;
-		return this;
-	}
 	
 	public Line setResolution(double resolution) {
 		this.resolution = resolution;
@@ -170,10 +165,5 @@ public class Line implements Drawable{
 	
 	public double getResolution() {
 		return resolution;
-	}
-
-	@Override
-	public boolean isForceRendering() {
-		return forceRender;
 	}
 }

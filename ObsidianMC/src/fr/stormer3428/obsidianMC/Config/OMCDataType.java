@@ -27,7 +27,7 @@ public abstract class OMCDataType<T>{
 		};
 	}
 
-	public static OMCDataType<Integer> INTEGER(String name){ 
+	public static OMCDataType<Integer> INTEGER(String name, int defaultVal){ 
 		return new OMCSerializableDataType<>(name) {
 
 			@Override
@@ -47,7 +47,32 @@ public abstract class OMCDataType<T>{
 
 			@Override
 			public Integer defaultVal() {
-				return 0;
+				return defaultVal;
+			}
+		};
+	}
+
+	public static OMCDataType<Double> DOUBLE(String name, double defaultVal){ 
+		return new OMCSerializableDataType<>(name) {
+
+			@Override
+			public String toString(Double value) {
+				return value.toString();
+			}
+
+			@Override
+			public Double fromString(String serialized) {
+				try {
+					return Double.parseDouble(serialized);
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+				return defaultVal();
+			}
+
+			@Override
+			public Double defaultVal() {
+				return defaultVal;
 			}
 		};
 	}

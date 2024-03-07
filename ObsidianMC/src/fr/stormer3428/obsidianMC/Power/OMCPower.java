@@ -91,7 +91,11 @@ public abstract class OMCPower implements PluginTied, Listener{
 	}
 
 	public void putOnCooldown(UUID uuid, int abilityCooldown) {
-		onCooldown.put(uuid, Math.max(getCooldown(uuid), abilityCooldown));
+		setCooldown(uuid, Math.max(getCooldown(uuid), abilityCooldown));
+	}
+
+	public void setCooldown(UUID uuid, int abilityCooldown) {
+		onCooldown.put(uuid, abilityCooldown);
 	}
 
 	public void clearCooldown(Player p) {

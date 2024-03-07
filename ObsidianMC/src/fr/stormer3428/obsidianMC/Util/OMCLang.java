@@ -3,7 +3,6 @@ package fr.stormer3428.obsidianMC.Util;
 import java.io.File;
 import java.io.IOException;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import fr.stormer3428.obsidianMC.OMCPlugin;

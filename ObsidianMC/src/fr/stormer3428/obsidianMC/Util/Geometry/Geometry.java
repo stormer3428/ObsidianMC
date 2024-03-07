@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import fr.stormer3428.obsidianMC.Manager.OMCLogger;
@@ -27,6 +28,11 @@ public class Geometry {
 	
 	public Geometry draw(Location location, double scale) {
 		for(Drawable drawable : drawables) drawable.draw(location, scale);
+		return this;
+	}
+	
+	public Geometry draw(Location location, double scale, Player ... pls) {
+		for(Drawable drawable : drawables) drawable.draw(location, scale, pls);
 		return this;
 	}
 	
@@ -101,8 +107,8 @@ public class Geometry {
 		return this;
 	}
 
-	public Geometry setForceRendering(boolean forceRender) {
-		for(Drawable drawable : drawables) drawable.setForceRendering(forceRender);
+	public Geometry setRenderDistance(double renderDistance) {
+		for(Drawable drawable : drawables) drawable.setRenderDistance(renderDistance);
 		return this;
 	}
 	
@@ -121,7 +127,4 @@ public class Geometry {
 		for(Drawable drawable : other.getDrawables()) add(drawable);
 		return this;
 	}
-
-
-
 }

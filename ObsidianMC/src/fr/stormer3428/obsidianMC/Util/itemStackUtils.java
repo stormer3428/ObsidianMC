@@ -1,7 +1,11 @@
 package fr.stormer3428.obsidianMC.Util;
 
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +14,7 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.SmithingRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -61,6 +66,18 @@ public class itemStackUtils {
 		it.setItemMeta(itm);
 		return it;
 	}
+	
+    public static ItemStack getHeadFromUUID(UUID uuid) {
+        return getHeadFromOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
+    }
+
+    public static ItemStack getHeadFromOfflinePlayer(OfflinePlayer player) {
+    	ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta skull = (SkullMeta) item.getItemMeta();
+        skull.setOwningPlayer(player);
+        item.setItemMeta(skull);
+        return item;
+    }
 	
 	
 }
