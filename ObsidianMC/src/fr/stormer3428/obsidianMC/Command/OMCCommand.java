@@ -8,10 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.TabCompleteEvent;
 
+import fr.stormer3428.obsidianMC.OMCLang;
+import fr.stormer3428.obsidianMC.OMCLogger;
 import fr.stormer3428.obsidianMC.OMCPlugin;
-import fr.stormer3428.obsidianMC.Manager.OMCCommandManager;
-import fr.stormer3428.obsidianMC.Manager.OMCLogger;
-import fr.stormer3428.obsidianMC.Util.OMCLang;
 
 /**
  * This object represents a Minecraft command in the form of a signature and {@link OMCVariable} system, </br>

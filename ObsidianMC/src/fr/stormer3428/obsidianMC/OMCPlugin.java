@@ -14,14 +14,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.io.Files;
 
-import fr.stormer3428.obsidianMC.Config.AutoConfig;
-import fr.stormer3428.obsidianMC.Config.AutoconfigParser;
-import fr.stormer3428.obsidianMC.Config.BooleanConfigValue;
-import fr.stormer3428.obsidianMC.Config.ConfigHolder;
-import fr.stormer3428.obsidianMC.Config.PluginTied;
-import fr.stormer3428.obsidianMC.Manager.ABSBDefenseMatrix;
-import fr.stormer3428.obsidianMC.Manager.OMCLogger;
-import fr.stormer3428.obsidianMC.Util.OMCLang;
+import fr.stormer3428.obsidianMC.Data.Config.AutoConfig;
+import fr.stormer3428.obsidianMC.Data.Config.AutoconfigParser;
+import fr.stormer3428.obsidianMC.Data.Config.BooleanConfigValue;
+import fr.stormer3428.obsidianMC.Security.ABSBDefenseMatrix;
 
 @AutoConfig
 public abstract class OMCPlugin extends JavaPlugin{
@@ -60,7 +56,7 @@ public abstract class OMCPlugin extends JavaPlugin{
 		OMCLogger.debug("reguesting registering of plugin tied classes"); registerIntegratedPluginTied(); registerPluginTied();
 		OMCLogger.debug("reguesting enabling of child plugin"); onObsidianEnable();
 		
-		OMCLogger.debug("reloading configHolders");	ConfigHolder.reloadAllConfigs();
+//		OMCLogger.debug("reloading configHolders");	ConfigHolder.reloadAllConfigs();
 		OMCLogger.debug("injecting config values into classes"); autoconfigParser.updateValues();
 		
 		OMCLogger.debug("reguesting enabling of plugin tied classes"); for(PluginTied pluginTied : new ArrayList<>(pluginTieds)) pluginTied.onPluginEnable();
@@ -69,7 +65,7 @@ public abstract class OMCPlugin extends JavaPlugin{
 	public void reload() {
 		loadLangAndLogger();
 		
-		OMCLogger.debug("reloading configHolders");	ConfigHolder.reloadAllConfigs();
+//		OMCLogger.debug("reloading configHolders");	ConfigHolder.reloadAllConfigs();
 		OMCLogger.debug("injecting config values into classes"); autoconfigParser.updateValues();
 		
 		OMCLogger.debug("reloading plugin tied"); 	for(PluginTied pluginTied : new ArrayList<>(pluginTieds)) pluginTied.onPluginReload();

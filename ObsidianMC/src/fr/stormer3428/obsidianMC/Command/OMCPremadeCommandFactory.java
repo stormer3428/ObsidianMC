@@ -11,13 +11,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import fr.stormer3428.obsidianMC.OMCLang;
+import fr.stormer3428.obsidianMC.OMCLogger;
 import fr.stormer3428.obsidianMC.OMCPlugin;
-import fr.stormer3428.obsidianMC.Item.OMCItem;
-import fr.stormer3428.obsidianMC.Manager.OMCItemManager;
-import fr.stormer3428.obsidianMC.Manager.OMCLogger;
-import fr.stormer3428.obsidianMC.Manager.OMCPowerManager;
-import fr.stormer3428.obsidianMC.Power.OMCPower;
-import fr.stormer3428.obsidianMC.Util.OMCLang;
+import fr.stormer3428.obsidianMC.Item.OMCItemManager;
+import fr.stormer3428.obsidianMC.Item.Types.OMCItem;
+import fr.stormer3428.obsidianMC.Power.OMCPowerManager;
+import fr.stormer3428.obsidianMC.Power.Types.OMCPower;
 
 public class OMCPremadeCommandFactory {
 
