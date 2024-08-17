@@ -85,7 +85,6 @@ public class ParticleGeometry {
 	public Vector getDirection() {
 		return direction;
 	}
-	
 
 	public ParticleGeometry setParticleSpeed(float speed) {
 		for(ParticleDrawable drawable : drawables) drawable.setParticleSpeed(speed);
